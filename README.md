@@ -1,18 +1,25 @@
 # A project that basically brings the coolness of Trello to Github issues
 
-State goals:
- - drag and drop issues between 'stacks'
+Project goals:
+
+ - Bring drag and drop issues between 'stacks' and easy to see and use metaphor
  - edit issues, comments etc
+ - zero config, only conventions and leveragint the Github API
 
 
-Implementation goals:
- - zero config - only conventions and leveragint the Github API
- - implemented as a chrome plugin (but in a way to port easy to somewhere else too)
-
+Conventions:
 
  - A 'stack' is a tag with a format like 's1 Todo'
  - Any issue with multiple stack tags will be in the 'earliest' stack
- - A stack can have a colour
+ - A stack can have a colour (unlike Trello)
+ - A comment which includes a list can have [ ] and [x] to indicate done items
+
+
+Exclusions:
+
+ - Live updating
+ - Votes are left out for now (not sure on a convention?)
+
 
 
 
