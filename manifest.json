@@ -1,0 +1,13 @@
+{
+	"name":	"Ghello",
+	"description": "Github issues shaped like Trello",
+	"version": "0.0.1",
+	"browser_action": {
+		"default_icon": "images/github-logo.png",
+		"default_title": "Ghello"
+	},
+	"options_page": "options.html",
+	"permissions": [
+		"http://api.flickr.com/"
+	]
+}

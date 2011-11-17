@@ -19,6 +19,7 @@ Exclusions:
 
  - Live updating
  - Votes are left out for now (not sure on a convention?)
+ - Tasks can only be assigned to one person at a time
 
 
 

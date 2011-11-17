@@ -1,0 +1,73 @@
+<html>
+<head><title>Ghello Options</title></head>
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<script src="lib/jquery.1.7.0.min.js"></script>
+<script type="text/javascript">
+
+function save(name){
+	var val = $('#'+name).val();
+	localStorage[name] = val;
+}
+
+function save_options() {
+	save('username');
+	save('password');
+	save('repo');
+	$('#status').addClass('label success').html('Options Saved').fadeOut('slow');
+	return false;
+}
+
+function restore(name){
+	var val= localStorage[name];
+	$('#'+name).val(val);
+}
+
+function restore_options() {
+	restore('username');
+	restore('password');
+	restore('repo');
+}
+
+</script>
+
+<body onload="restore_options()">
+
+<form>
+	<fieldset><legend>Github credentials</legend>
+
+	<div class="clearfix">
+		<label for="username">Github username:</label>
+		<div class="input">
+			<input class="xlarge" id="username">
+		</div>
+	</div>
+	<div class="clearfix">
+		<label for="password">Github password:</label>
+		<div class="input">
+			<input class="xlarge" id="password">
+		</div>
+	</div>
+	</fieldset>
+
+	<fieldset><legend>Github repo</legend>
+
+	<div class="clearfix">
+		<label for="repo">Github repo:</label>
+		<div class="input">
+			<input class="xlarge" id="repo"><span class="help-inline">eg brendanheywood/ghello</span>
+		</div>
+	</div>
+	</fieldset>
+
+	<div class="actions">
+	<button class="btn primary" onclick="return save_options()">Save</button>
+	<button class="btn" onclick="window.close()">Close</button>
+	<span id="status"></span>
+	</div>
+
+</form>
+
+</body>
+</html>
+
