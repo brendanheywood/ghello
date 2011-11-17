@@ -1,0 +1,153 @@
+<html>
+<meta charset="utf-8">
+<head><title>Ghello board</title></head>
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<script src="lib/jquery.1.7.0.min.js"></script>
+<script type="text/javascript">
+
+</script>
+<style>
+.stacks {
+	background: #367;
+	height: 100%;
+}
+.stack {
+background: #e3e3e3;
+float: left;
+width: 20%;
+display: inline-block;
+border: 1px solid #999;
+border-radius: 5px;
+margin: 52px 5px 0 11px;
+padding: 5px;
+box-shadow: 3px 3px 7px black;
+color: black;
+}
+.stack h2 {
+	
+}
+.stack h2::before {
+content: "☰";
+display: inline-block;
+width: 1.3em;
+margin-left: 0.3em;
+}
+
+.cards {
+margin: 0;
+padding: 0;
+}
+.cards li {
+background: white;
+margin: 0 0 6px 0;
+padding: 8px 12px;
+display: block;
+border: 1px solid #999;
+border-radius: 5px;
+font-size: 18px;
+color: black;
+}
+.addcard {
+border-radius: 3px;
+color: #999;
+margin: 0;
+padding: 10px 14px;
+font-size: 21px;
+display: block;
+
+}
+li.ui-sortable-placeholder {
+	visibility: visible !important;
+	background: #bbb;
+	margin: -2px 0 4px 0;
+	border-color: #bbb;
+}
+
+.ui-sortable-helper {
+	box-shadow: 0px 10px 20px rgba(0,0,0,.8);
+	-webkit-transform: rotate(3deg);
+	
+}
+
+</style>
+<body>
+
+<div class="topbar">
+
+
+      <div class="topbar-inner">
+        <div class="container">
+          <a class="brand" href="#">Ghello</a>
+          <ul class="nav">
+            <li class=""><a href="#overview"></a></li>
+            <li class=""><a href="#grid-system">Repos</a></li>
+          </ul>
+
+	<ul class="nav secondary-nav">
+            <li class="dropdown"><a href="#" class="opdown-toggle">Dropdown</a></li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+<div class="stacks">
+
+<div class="stack">
+	<h2>Stack 1</h2>
+	<ul class="cards">
+		<li>Denni finds work</li>
+		<li>Find a place to live</li>
+		<li>Item 1</li>
+	</ul>
+	<a class="addcard">Add issue</a>
+</div>
+
+<div class="stack">
+	<h2>Stack 1</h2>
+	<ul class="cards">
+		<li>Item 1</li>
+		<li>Item 1</li>
+		<li>Item 1</li>
+		<li>Item 1</li>
+		<li>Item 1</li>
+	</ul>
+	<a class="addcard">Add issue</a>
+</div>
+
+
+<div class="stack">
+	<h2>Stack 1</h2>
+	<ul class="cards">
+		<li>Item 1</li>
+		<li>Item 1</li>
+	</ul>
+	<a class="addcard">Add issue</a>
+</div>
+
+
+</div>
+
+<base href="http://jqueryui.com/demos/draggable/default.html">
+	<link rel="stylesheet" href="../../themes/base/jquery.ui.all.css">
+	<script src="../../ui/jquery.ui.core.js"></script>
+	<script src="../../ui/jquery.ui.widget.js"></script>
+	<script src="../../ui/jquery.ui.mouse.js"></script>
+	<script src="../../ui/jquery.ui.draggable.js"></script>
+	<script src="../../ui/jquery.ui.sortable.js"></script>
+
+<script>
+$(".stacks").sortable({
+});
+$(".cards").sortable({
+	connectWith: '.cards'
+});
+
+
+</script>
+
+
+</body>
+</html>
+
