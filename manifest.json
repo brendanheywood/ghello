@@ -2,13 +2,29 @@
 	"name":	"Ghello",
 	"description": "Github issues shaped like Trello",
 	"version": "0.0.1",
-	"browser_action": {
+	"background_page" : "background.html",
+	"page_action": {
 		"default_icon": "images/github-logo.png",
-		"default_title": "Ghello",
-		"default_popup": "popup.html"
+		"default_title": "Ghello"
 	},
+	"content_scripts" : [
+		{
+			"matches" : [
+				"http://github.com/*",
+				"https://github.com/*"
+			],
+			"js" : [
+				"contentscript.js"
+			],
+			"run_at" : "document_idle",
+			"all_frames" : false
+		}
+	],
 	"options_page": "options.html",
 	"permissions": [
-		"https://api.github.com/"
+		"tabs",
+		"https://api.github.com/",
+		"https://github.com/",
+		"http://github.com/"
 	]
 }

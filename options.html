@@ -13,7 +13,6 @@ function save(name){
 function save_options() {
 	save('username');
 	save('password');
-	save('repo');
 	$('#status').addClass('label success').html('Options Saved').fadeOut('slow');
 	return false;
 }
@@ -26,7 +25,6 @@ function restore(name){
 function restore_options() {
 	restore('username');
 	restore('password');
-	restore('repo');
 }
 
 </script>
@@ -46,16 +44,6 @@ function restore_options() {
 		<label for="password">Github password:</label>
 		<div class="input">
 			<input class="xlarge" id="password">
-		</div>
-	</div>
-	</fieldset>
-
-	<fieldset><legend>Github repo</legend>
-
-	<div class="clearfix">
-		<label for="repo">Github repo:</label>
-		<div class="input">
-			<input class="xlarge" id="repo"><span class="help-inline">eg brendanheywood/ghello</span>
 		</div>
 	</div>
 	</fieldset>
