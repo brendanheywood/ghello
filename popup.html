@@ -1,0 +1,32 @@
+<html>
+<head><title>Ghello Popup</title></head>
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<script src="lib/jquery.1.7.0.min.js"></script>
+
+<body style="width: 300px; height: 300px">
+
+<h3>Repos for <span id="who"></span></h3>
+<ul id="repos">
+</ul>
+<script>
+var username = localStorage['username'];
+var password = localStorage['password'];
+$('#who').html(username);
+
+// go get a list of repos
+var api = 'https://api.github.com/';
+var repos = api + '/user/repos';
+
+$.ajax({
+	url: repos,
+	success: function(){
+		alert('crap');
+	}
+});
+
+</script>
+
+</body>
+</html>
+
