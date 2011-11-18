@@ -82,8 +82,8 @@ $('#settings').click(function(){
 	chrome.tabs.create({url: "options.html"});
 });
 
-var issues;
-var labels;
+var issues = [];
+var labels = [];
 var labels2index = {};
 
 
@@ -144,13 +144,22 @@ var labelsPromise = $.ajax({
 		alert('Error loading labels');
 	}
 });
-var issuePromise = $.ajax({
-	url: 'https://api.github.com/repos/'+user+'/'+repo+'/issues?',
+var openIssuesPromise = $.ajax({
+	url: 'https://api.github.com/repos/'+user+'/'+repo+'/issues?state=open',
 	success: function(data){
-		issues = data;
+		issues = issues.concat(data);
 	},
 	error: function(){
-		alert('Error loading issues');
+		alert('Error loading open issues');
+	}
+});
+var closedIssuesPromise = $.ajax({
+	url: 'https://api.github.com/repos/'+user+'/'+repo+'/issues?state=closed',
+	success: function(data){
+		issues = issues.concat(data);
+	},
+	error: function(){
+		alert('Error loading closed issues');
 	}
 });
 
@@ -162,6 +171,9 @@ function getStack(issue){
 	var stack = 0; // default to backlog
 
 	// if issues is closed then it is always last stack
+	if (issue.state == "closed"){
+		return labels.length - 2;
+	}
 
 	// run through labels, first match exit
 	$.each(issue.labels, function(i,v){
@@ -177,7 +189,7 @@ function getStack(issue){
 /*
  * When both the labels and the issues are loaded then render the issues
  */
-$.when(labelsPromise, issuePromise).then(function(){
+$.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
 	
 	$.each(issues, function(index, val){
 
@@ -215,6 +227,8 @@ $.when(labelsPromise, issuePromise).then(function(){
 
 	});
 
+
+	// should only do this is we are logged in (and have permission?)
 
 	$(".stacks").sortable({
 	});
