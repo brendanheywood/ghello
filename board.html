@@ -16,7 +16,7 @@
         <li class=""><a href="#" target="_blank" id="issues">Open issues in Github →</a></li>
       </ul>
       <ul class="nav secondary-nav">
-        <li><a href="#" class="">+ Add a stack</a>
+        <li class="loggedin"><a href="#" id="addstack" class="">+ Add a stack</a>
         <li><a href="#" id="settings">Options</a></li>
 <!--
         <li class="dropdown"><a href="#" class="dropdown-toggle">Settings</a>
@@ -55,7 +55,106 @@
 <script src="lib/jquery-ui/ui/jquery.ui.draggable.js"></script>
 <script src="lib/jquery-ui/ui/jquery.ui.sortable.js"></script>
 <script src="lib/bootstrap/bootstrap-dropdown.js"></script>
+<script src="lib/underscore-1.2.1.js"></script>
+<script src="lib/backbone-0.5.3.js"></script>
 <script type="text/javascript">
+var Stack = Backbone.Model.extend({
+});
+
+/*
+ * - title
+ * - number
+ * - tags
+ * - assignee
+ */
+var Issue = Backbone.Model.extend({
+	setStack: function(id){
+		// remove other stacks
+		// add this stack
+	}
+});
+
+
+
+
+/*
+ * - user
+ * - repo
+ * - milestone (optional)
+ */
+
+var Board = Backbone.Collection.extend({
+	model: Issue,
+	
+	/*
+	 * return a list of stacks
+	 */
+	stacks: function(){
+	},
+
+	
+
+});
+
+
+
+
+
+var IssueView = Backbone.View.extend({
+	tagName: "li",
+//	template: _.template($('#issue-template').html() ),
+
+	render: function() {
+		$(this.el).html(this.template(this.model.toJSON()));
+		this.setText();
+		return this;
+	},
+
+});
+
+
+
+
+
+
+
+
+var AppView = Backbone.View.extend({
+	el: $('body'),
+	events: {
+		"click #addstack": "showAddStackPrompt"
+	},
+	initialize: function(){
+		
+	},
+
+	showAddStackPrompt: function(){
+		alert('Not supported yet :)');
+	}
+	
+
+});
+
+
+var App = new AppView();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 (function($) {
     $.QueryString = (function(a) {
@@ -125,7 +224,7 @@ function drawStacks(){
 	var c;
 	$.each(stacks, function(index, val){
 		var stack = stacks[index];
-		$('.stacks').append("<div class='stack' style='background-color: #"+stack.color+"' id='stack"+index+"'><h2>"+stack.name+"</h2><ul class='cards'></ul><a class='addcard'>Add issue</a></div>");
+		$('.stacks').append("<div class='stack' style='background-color: #"+stack.color+"' id='stack"+index+"'><h2>"+stack.name+"</h2><ul class='cards'></ul><a class='loggedin addcard'>Add issue</a></div>");
 	});
 
 }
@@ -230,14 +329,17 @@ $.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
 
 	});
 
+	var loggedin = false;
+
 
 	// should only do this is we are logged in (and have permission?)
-
-	$(".stacks").sortable({
-	});
-	$(".cards").sortable({
-		connectWith: '.cards'
-	});
+	if (loggedin){
+		$(".stacks").sortable({
+		});
+		$(".cards").sortable({
+			connectWith: '.cards'
+		});
+	};
 });
 
 </script>
