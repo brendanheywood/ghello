@@ -1,3 +1,8 @@
+.loading {
+	background: rgba(0,0,0,.5);
+	border: 9px solid red;
+}
+
 .stacks {
 	background: #367;
 	height: 100%;
@@ -14,6 +19,7 @@
 	box-shadow: 3px 3px 7px black;
 	color: black;
 	min-width: 200px;
+	max-width: 200px;
 }
 .stack h2 {
 	

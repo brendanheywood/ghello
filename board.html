@@ -1,6 +1,6 @@
 <html>
 <meta charset="utf-8">
-<head><title>Ghello board</title></head>
+<head><title></title></head>
 <link rel="stylesheet" href="lib/bootstrap/bootstrap.css">
 <script src="lib/jquery.1.7.0.min.js"></script>
 <link rel="stylesheet" href="lib/jquery-ui/ui/themes/base/jquery.ui.all.css">
@@ -102,15 +102,82 @@
 var user = $.QueryString['user'];
 var repo = $.QueryString['repo'];
 
-$('title').html(user+'/'+repo);
+$('title').html(repo+ ' by '+ user);
 $('#repo').html(user+'/'+repo).attr('href', 'https://github.com/'+user+'/'+repo);
 $('#issues').attr('href', 'https://github.com/'+user+'/'+repo+'/issues');
 $('#settings').click(function(){
 	chrome.tabs.create({url: "options.html"});
 });
 
+var issues;
+var labels;
+
+function drawStacks(){
+	// for each label, make a stack if it starts with 'S\d+\s'
+	// also make a stack for no labels and closed
+
+	var stacks = [];
+
+	// Add the first backlog stack
+	stacks.push({
+		name: 'Backlog',
+		color: 'eeeeee'
+	});
+	labels = labels.sort(function(a,b){
+		return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
+	});
+	$.each(labels, function(index, value){
+		var label = labels[index];
+		var matches = label.name.match(/S\d+\s(.*)/);
+		if (!matches){
+			return;
+		}
+		stacks.push({
+			name: matches[1],
+			color: label.color
+		});
+	});
+
+	// Add the last closed stack
+	stacks.push({
+		name: 'Closed',
+		color: '888888'
+	});
+	var c;
+	$.each(stacks, function(index, val){
+		var stack = stacks[index];
+		$('.stacks').append("<div class='stack' id='stack"+index+"'><h2>"+stack.name+"</h2><ul></ul><a class='addcard'>Add issue</a></div>");
+	});
+
+}
+
+function drawCards(){
+}
+
+
+var labelsPromise = $.ajax({
+	url: 'https://api.github.com/repos/'+user+'/'+repo+'/labels',
+	success: function(data){
+		labels = data;
+		drawStacks();
+	},
+	error: function(){
+		alert(';bad');
+	}
+});
+var issuePromise = $.ajax({
+	url: 'https://api.github.com/repos/'+user+'/'+repo+'/issues',
+	success: function(data){
+		issues = data;
+	},
+	error: function(){
+		alert(';bad');
+	}
+});
+
 
 $(".stacks").sortable({
+	// save a bunch of tag names
 });
 $(".cards").sortable({
 	connectWith: '.cards'
