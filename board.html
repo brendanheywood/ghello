@@ -142,7 +142,7 @@ var labelsPromise = $.ajax({
 	}
 });
 var issuePromise = $.ajax({
-	url: 'https://api.github.com/repos/'+user+'/'+repo+'/issues',
+	url: 'https://api.github.com/repos/'+user+'/'+repo+'/issues?',
 	success: function(data){
 		issues = data;
 	},
@@ -178,7 +178,7 @@ $.when(labelsPromise, issuePromise).then(function(){
 		var stack = getStack(issue);
 
 		// draw an issue
-		var html = "<li><span class='title'>"+issue.title+"</span>";
+		var html = "<li><span class='num'>#"+issue.number+"</span> <span class='title'>"+issue.title+"</span>";
 		var tags = [];
 		if (issue.labels){
 			$.each(issue.labels, function(i, v){
@@ -194,6 +194,9 @@ $.when(labelsPromise, issuePromise).then(function(){
 				html += "<li style='border-color: #"+v.color+"'>"+v.name+"</li>";
 			});
 			html += "</ul>";
+		}
+		if (issue.assignee){
+			html += "<a href='#' class='avatar'><img width=24 height=24 src='"+issue.assignee.avatar_url+"'></a>";
 		}
 
 		html += "</li>";

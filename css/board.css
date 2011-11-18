@@ -54,6 +54,19 @@
 	font-size: 15px;
 	color: black;
 }
+.avatar {
+	border: 1px solid #999;
+	padding: 1px;
+	height: 24px;
+	display: inline-block;
+	border-radius: 2px;
+	float: right;
+	position: relative;
+	top: -0.9px;
+	right: -14px;
+	margin-top: -16px;
+}
+
 .labels {
 	margin: 4px -10px -4px;
 }
@@ -64,10 +77,11 @@
 	white-space: nowrap;
 	font-size: 9px;
 	border-radius: 2px;
-	border-width: 2px;
+	border-width: 1px;
 	border-left-width: 8px;
 	font-weight: bold;
-	box-shadow: 1px 1px 4px 1px rgba(0,0,0,.7);;	
+	box-shadow: 2px 2px 4px  rgba(0,0,0,.7);
+	line-height: 13px;
 }
 
 .cards li.ui-sortable-helper {
