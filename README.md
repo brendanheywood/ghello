@@ -1,5 +1,7 @@
 # A chrome extension that brings the coolness of Trello to Github issues
 
+Pronounced like the first bit of 'Ghetto' and the last bit of 'Trello'.
+
 ## Project goals:
 
  - Bring drag and drop issues between 'stacks' and easy to see and use metaphor
