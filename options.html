@@ -1,7 +1,38 @@
 <html>
 <head><title>Ghello Options</title></head>
-
 <link rel="stylesheet" href="css/bootstrap.css">
+<body onload="restore_options()">
+
+<div class="container">
+
+<h1>Ghello options</h1>
+<form>
+	<fieldset><legend>Github credentials</legend>
+
+	<div class="clearfix">
+		<label for="username">Github username:</label>
+		<div class="input">
+			<input class="xlarge" id="username">
+		</div>
+	</div>
+	<div class="clearfix">
+		<label for="password">Github password:</label>
+		<div class="input">
+			<input type="password" class="xlarge" id="password">
+		</div>
+	</div>
+	</fieldset>
+
+	<div class="actions">
+	<button class="btn primary" onclick="return save_options()">Save</button>
+	<button class="btn" onclick="window.close()">Close</button>
+	<span id="status"></span>
+	</div>
+
+</form>
+
+</div>
+</body>
 <script src="lib/jquery.1.7.0.min.js"></script>
 <script type="text/javascript">
 
@@ -29,33 +60,5 @@ function restore_options() {
 
 </script>
 
-<body onload="restore_options()">
-
-<form>
-	<fieldset><legend>Github credentials</legend>
-
-	<div class="clearfix">
-		<label for="username">Github username:</label>
-		<div class="input">
-			<input class="xlarge" id="username">
-		</div>
-	</div>
-	<div class="clearfix">
-		<label for="password">Github password:</label>
-		<div class="input">
-			<input class="xlarge" id="password">
-		</div>
-	</div>
-	</fieldset>
-
-	<div class="actions">
-	<button class="btn primary" onclick="return save_options()">Save</button>
-	<button class="btn" onclick="window.close()">Close</button>
-	<span id="status"></span>
-	</div>
-
-</form>
-
-</body>
 </html>
 
