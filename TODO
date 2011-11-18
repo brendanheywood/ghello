@@ -3,13 +3,13 @@ DONE store usename and password
 DONE add tags
 DONE add users
 
+get stack sort working
+
+drag a stack - renames the tags
 
 add a card - starts with that tag
 crag a card - swaps the tags
-drag a stack - renames the tags
-open an issue
 add filter by milestone
-
 
 
 get a view of an issue working
