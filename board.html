@@ -199,7 +199,10 @@ $.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
 		var stack = getStack(issue);
 
 		// draw an issue
-		var html = "<li><span class='num'>#"+issue.number+"</span> <span class='title'>"+issue.title+"</span>";
+		var html = "<li>";
+		html += "<span class='title'>"+issue.title;
+		html += " <span class='num'>#"+issue.number+"</span>";
+		html += "</span>";
 		var tags = [];
 		if (issue.labels){
 			$.each(issue.labels, function(i, v){
