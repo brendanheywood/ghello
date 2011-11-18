@@ -48,7 +48,7 @@ chrome.pageAction.onClicked.addListener(function(tab) {
 	var user = parts[3];
 	var repo = parts[4];
 
-	var board_url = chrome.extension.getURL("board.html");
+	var board_url = chrome.extension.getURL('board.html?user='+user+'&repo='+repo);
 	focusOrCreateTab(board_url);
 
 });
