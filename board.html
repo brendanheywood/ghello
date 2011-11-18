@@ -4,72 +4,7 @@
 <link rel="stylesheet" href="lib/bootstrap/bootstrap.css">
 <script src="lib/jquery.1.7.0.min.js"></script>
 <link rel="stylesheet" href="lib/jquery-ui/ui/themes/base/jquery.ui.all.css">
-<style>
-.stacks {
-	background: #367;
-	height: 100%;
-}
-.stack {
-background: #e3e3e3;
-float: left;
-width: 20%;
-display: inline-block;
-border: 1px solid #999;
-border-radius: 5px;
-margin: 52px 5px 0 11px;
-padding: 5px;
-box-shadow: 3px 3px 7px black;
-color: black;
-}
-.stack h2 {
-	
-}
-.stack h2::before {
-content: "☰";
-display: inline-block;
-width: 1.3em;
-margin-left: 0.3em;
-}
-
-.cards {
-margin: 0;
-padding: 0;
-}
-.cards li {
-background: white;
-margin: 0 0 6px 0;
-padding: 8px 12px;
-display: block;
-border: 1px solid #999;
-border-radius: 5px;
-font-size: 18px;
-color: black;
-}
-.addcard {
-border-radius: 3px;
-color: #999;
-margin: 0;
-padding: 10px 14px;
-font-size: 21px;
-display: block;
-
-}
-li.ui-sortable-placeholder {
-	visibility: visible !important;
-	background: #bbb;
-	margin: -2px 0 4px 0;
-	border-color: #bbb;
-}
-
-.ui-sortable-helper {
-	box-shadow: 0px 10px 20px rgba(0,0,0,.8);
-	-webkit-transform: rotate(3deg);
-	
-}
-.topbar h3 a, .topbar .brand {
-	font-weight: bold;
-}
-</style>
+<link rel="stylesheet" href="css/board.css">
 <body>
 
 <div class="topbar" data-dropdown="dropdown">
@@ -82,7 +17,7 @@ li.ui-sortable-placeholder {
       </ul>
       <ul class="nav secondary-nav">
 <!--
-        <li class=""><a href="#" class="">+ Add a stack</a>
+       <li class=""><a href="#" class="">+ Add a stack</a>
 -->
         <li><a href="#" id="settings">Options</a></li>
 <!--

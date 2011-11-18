@@ -1,0 +1,50 @@
+.stacks {
+	background: #367;
+	height: 100%;
+}
+.stack {
+	background: #e3e3e3;
+	float: left;
+	width: 20%;
+	display: inline-block;
+	border: 1px solid #999;
+	border-radius: 5px;
+	margin: 52px 5px 0 11px;
+	padding: 5px;
+	box-shadow: 3px 3px 7px black;
+	color: black;
+	min-width: 200px;
+}
+.stack h2 {
+	
+}
+.stack h2::before {
+	content: "☰";
+	display: inline-block;
+	width: 1.3em;
+	margin-left: 0.3em;
+}
+
+.cards {
+	margin: 0;
+	padding: 0;
+}
+.cards li {
+	background: white;
+	margin: 0 0 6px 0;
+	padding: 8px 12px;
+	display: block;
+	border: 1px solid #999;
+	border-radius: 5px;
+	font-size: 18px;
+	color: black;
+}
+.addcard {
+	border-radius: 3px;
+	color: #999;
+	margin: 0;
+	padding: 10px 14px;
+	font-size: 21px;
+	display: block;
+
+}
