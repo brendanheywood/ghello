@@ -35,17 +35,15 @@
   </div>
 </div>
 
-<div class="stacks">
+<div id="loading">
+<div class="alert-message warning">
+        <p><strong>Loading...</strong></p>
+      </div>
 
-<div class="stack">
-	<h2>Stack 1</h2>
-	<ul class="cards">
-		<li>Denni finds work</li>
-		<li>Find a place to live</li>
-		<li>Item 1</li>
-	</ul>
-	<a class="addcard">Add issue</a>
 </div>
+
+
+<div class="stacks">
 
 </div>
 
@@ -93,6 +91,8 @@ function drawStacks(){
 	// for each label, make a stack if it starts with 'S\d+\s'
 	// also make a stack for no labels and closed
 
+	$('#loading').fadeOut('slow');
+
 	var stacks = [];
 
 	// Add the first backlog stack
@@ -123,7 +123,7 @@ function drawStacks(){
 	var c;
 	$.each(stacks, function(index, val){
 		var stack = stacks[index];
-		$('.stacks').append("<div class='stack' style='background-color: #"+stack.color+"' id='stack"+index+"'><h2>"+stack.name+"</h2><ul></ul><a class='addcard'>Add issue</a></div>");
+		$('.stacks').append("<div class='stack' style='background-color: #"+stack.color+"' id='stack"+index+"'><h2>"+stack.name+"</h2><ul class='cards'></ul><a class='addcard'>Add issue</a></div>");
 	});
 
 }
@@ -139,7 +139,7 @@ var labelsPromise = $.ajax({
 		drawStacks();
 	},
 	error: function(){
-		alert(';bad');
+		alert('Error loading labels');
 	}
 });
 var issuePromise = $.ajax({
@@ -148,16 +148,49 @@ var issuePromise = $.ajax({
 		issues = data;
 	},
 	error: function(){
-		alert(';bad');
+		alert('Error loading issues');
 	}
 });
 
 
-$(".stacks").sortable({
-	// save a bunch of tag names
-});
-$(".cards").sortable({
-	connectWith: '.cards'
+/*
+ * given an issue find out which stack it should be in
+ */
+function getStack(issue){
+	var stack = 0; // default to backlog
+
+	// if issues is closed then it is always last stack
+
+	// run through labels, first match exit
+	return stack;	
+}
+
+
+/*
+ * When both the labels and the issues are loaded then render the issues
+ */
+$.when(labelsPromise, issuePromise).then(function(){
+	
+	$.each(issues, function(index, val){
+
+		var issue = issues[index];
+
+		// what stack is it?
+		var stack = getStack(issue);
+
+		// draw an issue
+		var li = $("<li>"+issue.title+"</li>");
+		$('#stack'+stack+' ul').append(li);
+
+
+	});
+
+
+	$(".stacks").sortable({
+	});
+	$(".cards").sortable({
+		connectWith: '.cards'
+	});
 });
 
 </script>

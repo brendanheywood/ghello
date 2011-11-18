@@ -1,6 +1,13 @@
-.loading {
-	background: rgba(0,0,0,.5);
-	border: 9px solid red;
+#loading {
+	background: rgba(0, 0, 0, .5);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 10;
+}
+#loading > div {
+	margin: 100px auto;
+	width: 100px;
 }
 
 .stacks {
@@ -23,6 +30,8 @@
 }
 .stack h2 {
 	text-shadow: 1px 1px 1px white;	
+	color: black;
+	font-size: 20px;
 }
 .stack h2::before {
 	content: "☰";
@@ -32,7 +41,7 @@
 }
 
 .cards {
-	margin: 0;
+	margin: 0 0 20px 0;
 	padding: 0;
 }
 .cards li {
@@ -45,6 +54,18 @@
 	font-size: 18px;
 	color: black;
 }
+.cards li.ui-sortable-helper {
+	box-shadow: 0 5px 10px black;
+	-webkit-transform: rotate(4deg);
+}
+.cards li.ui-sortable-placeholder {
+	visibility: visible !important;
+	background: #999;
+	margin-top: -2px;
+	margin-bottom: 6px;
+
+}
+
 .addcard {
 	border-radius: 3px;
 	color: #999;
