@@ -1,10 +1,10 @@
-# A project that basically brings the coolness of Trello to Github issues
+# A chrome extension that brings the coolness of Trello to Github issues
 
 Project goals:
 
  - Bring drag and drop issues between 'stacks' and easy to see and use metaphor
  - edit issues, comments etc
- - zero config, only conventions and leveragint the Github API
+ - zero config, zero state, zero hosting only conventions and leveraging the Github API
 
 
 Conventions:
