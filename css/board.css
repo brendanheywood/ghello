@@ -55,7 +55,7 @@
 	color: black;
 }
 .labels {
-	margin: 0;
+	margin: 4px -10px -4px;
 }
 .labels li {
 	padding: 0 2px;
