@@ -97,15 +97,15 @@ li.ui-sortable-placeholder {
 
 
       <div class="topbar-inner">
-        <div class="container">
-          <a class="brand" href="#">Ghello</a>
+        <div class="container-fluid">
+          <a class="brand" target="_blank" href="https://github.com/brendanheywood/ghello">Ghello</a>
           <ul class="nav">
-            <li class=""><a href="#overview"></a></li>
-            <li class=""><a href="#grid-system"><span id="user"></span>/<span id="repo"></span></a></li>
+            <li class=""><a href="#" id="repo"></a></li>
+            <li class=""><a href="#" target="_blank" id="issues">Open issues in Github →</a></li>
           </ul>
 
 	<ul class="nav secondary-nav">
-            <li class="dropdown"><a href="#" class="opdown-toggle">Dropdown</a></li>
+            <li class="dropdown"><a href="#" class="opdown-toggle">Settings</a></li>
           </ul>
 
         </div>
@@ -153,8 +153,9 @@ li.ui-sortable-placeholder {
 var user = $.QueryString['user'];
 var repo = $.QueryString['repo'];
 
-$('#user').html(user);
-$('#repo').html(repo);
+$('title').html(user+'/'+repo);
+$('#repo').html(user+'/'+repo).attr('href', 'https://github.com/'+user+'/'+repo);
+$('#issues').attr('href', 'https://github.com/'+user+'/'+repo+'/issues');
 
 
 $(".stacks").sortable({
