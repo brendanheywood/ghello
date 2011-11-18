@@ -47,29 +47,6 @@
 	<a class="addcard">Add issue</a>
 </div>
 
-<div class="stack">
-	<h2>Stack 1</h2>
-	<ul class="cards">
-		<li>Item 1</li>
-		<li>Item 1</li>
-		<li>Item 1</li>
-		<li>Item 1</li>
-		<li>Item 1</li>
-	</ul>
-	<a class="addcard">Add issue</a>
-</div>
-
-
-<div class="stack">
-	<h2>Stack 1</h2>
-	<ul class="cards">
-		<li>Item 1</li>
-		<li>Item 1</li>
-	</ul>
-	<a class="addcard">Add issue</a>
-</div>
-
-
 </div>
 
 
@@ -146,7 +123,7 @@ function drawStacks(){
 	var c;
 	$.each(stacks, function(index, val){
 		var stack = stacks[index];
-		$('.stacks').append("<div class='stack' id='stack"+index+"'><h2>"+stack.name+"</h2><ul></ul><a class='addcard'>Add issue</a></div>");
+		$('.stacks').append("<div class='stack' style='background-color: #"+stack.color+"' id='stack"+index+"'><h2>"+stack.name+"</h2><ul></ul><a class='addcard'>Add issue</a></div>");
 	});
 
 }

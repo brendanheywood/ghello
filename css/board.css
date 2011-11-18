@@ -22,7 +22,7 @@
 	max-width: 200px;
 }
 .stack h2 {
-	
+	text-shadow: 1px 1px 1px white;	
 }
 .stack h2::before {
 	content: "☰";
@@ -52,5 +52,5 @@
 	padding: 10px 14px;
 	font-size: 21px;
 	display: block;
-
+	background: #eee;
 }
