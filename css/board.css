@@ -51,11 +51,27 @@
 	display: block;
 	border: 1px solid #999;
 	border-radius: 5px;
-	font-size: 18px;
+	font-size: 15px;
 	color: black;
 }
+.labels {
+	margin: 0;
+}
+.labels li {
+	padding: 0 2px;
+	display: inline-block;
+	margin: 3px;
+	white-space: nowrap;
+	font-size: 9px;
+	border-radius: 2px;
+	border-width: 2px;
+	border-left-width: 8px;
+	font-weight: bold;
+	box-shadow: 1px 1px 4px 1px rgba(0,0,0,.7);;	
+}
+
 .cards li.ui-sortable-helper {
-	box-shadow: 0 5px 10px black;
+	box-shadow: 0 5px 15px rgba(0,0,0,.9);
 	-webkit-transform: rotate(4deg);
 }
 .cards li.ui-sortable-placeholder {
@@ -71,7 +87,7 @@
 	color: #999;
 	margin: 0;
 	padding: 10px 14px;
-	font-size: 21px;
+	font-size: 17px;
 	display: block;
 	background: #eee;
 }

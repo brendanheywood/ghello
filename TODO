@@ -1,18 +1,14 @@
 
 DONE store usename and password
 
+add tags
+add users
+add a card - starts with that tag
+crag a card - swaps the tags
+drag a stack - renames the tags
+open an issue
 
 
-
-
-get a model
-
-get it pulling from api (basic or OAth)
- - 1) list of tags
- - 2) list of issues
-
-
-get it displaying
 
 get a view of an issue working
 

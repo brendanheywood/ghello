@@ -179,8 +179,24 @@ $.when(labelsPromise, issuePromise).then(function(){
 		var stack = getStack(issue);
 
 		// draw an issue
-		var li = $("<li>"+issue.title+"</li>");
-		$('#stack'+stack+' ul').append(li);
+		var html = "<li><span class='title'>"+issue.title+"</span>";
+		var tags = [];
+		if (issue.labels){
+			$.each(issue.labels, function(i, v){
+				tags.push(v);
+			});
+		}
+		if (tags.length != 0){
+			html += "<ul class='labels'>";
+			$.each(tags, function(i, v){
+				html += "<li style='border-color: #"+v.color+"'>"+v.name+"</li>";
+			});
+			html += "</ul>";
+		}
+
+		html += "</li>";
+		var li = $(html);
+		$('#stack'+stack+' > ul').append(li);
 
 
 	});
