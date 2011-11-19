@@ -47,12 +47,23 @@
 <script src="lib/backbone-0.5.3.js"></script>
 <script src="common.js"></script>
 
+<script type="text/template" id="milestone-template">
+<li class='milestone' id='ms<%=  number %>'>
+	<h3><a href="board.html?user=<%= user %>&repo=<%= repo %>&milestone=<%= number %>"><%= title %></a></h3>
+	<div>
+		<p><%= description %></p>
+		<p>Open issues: <%= open_issues %></p>
+		<p>Closed issues: <%= closed_issues %></p>
+	</div>
+</li>
+</script>
 <script type="text/template" id="repo-template">
 <div class='repo' id='repo<%=  id %>'>
-	<h2><a href="board.html?user=<%= owner.login %>&repo=<%= name %>"><%= name %></a></h2>
+	<h2><a href="#"><span>▶</span> <span><%= name %></span></a></h2>
 	<div>
-		<p><a target="_blank" href="<%= html_url %>"><%= html_url %></a></p>
+		<ul class="milestones"></ul>
 		<p><%= description %></p>
+		<p><a target="_blank" href="<%= html_url %>"><%= html_url %></a></p>
 		<p>Open issues: <%= open_issues %></p>
 	</div>
 </div>
@@ -62,7 +73,7 @@
 
 
 
-var user = $.QueryString['user'];
+var user = localStorage['username'];
 
 $('title').html(user);
 $('#github-profile').attr('href', 'https://github.com/'+user);
@@ -101,6 +112,35 @@ $.when(reposPromise).then(function(){
 		$('.repos').append( repoTemplate(repo) );
 	});
 });
+
+var Repo = Backbone.View.extend({
+});
+
+var Profile = Backbone.View.extend({
+	el: $('body'),
+	events: {
+		"click .repo h2 a": "showMilestones",
+	},
+	showMilestones: function(){
+		var el = $(event.target).closest('a');
+		el.find('span:first').text('▼');
+		var repo = el.find('span:nth-child(2)').text();
+		GitHub('/repos/'+user+'/'+repo+'/milestones', null, function(data){
+			var ul = el.closest('.repo').find('.milestones');
+			
+			var milestoneTemplate = _.template( $('#milestone-template').html() );
+			$.each(data, function(i, ms){
+				ms.user = user;
+				ms.repo = repo;
+				ul.append( milestoneTemplate(ms) );
+			});
+		});
+
+		return false;
+	},
+});
+
+var profile = new Profile({user: user});
 
 </script>
 </body>

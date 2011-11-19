@@ -16,6 +16,7 @@
       <ul class="nav">
         <li class=""><a href="profile.html" id="profile">Profile</a></li>
         <li class="active"><a href="#" target="_blank" id="repo"></a></li>
+        <li class="dropdown"><a href="#" id="milestones">Milestones</a><ul class="dropdown-menu"><li>Loading...</li></ul></li>
         <li class=""><a href="#" target="_blank" id="issues">Open issues in Github →</a></li>
       </ul>
       <ul class="nav secondary-nav">
@@ -66,7 +67,7 @@
 	</li>
 </script>
 <script type="text/template" id="stack-template">
-	<div class='stack' style='background-color: #<%= color %>' id='stack<%=  id %>'>
+	<div class='stack <%= name  %>' style='background-color: #<%= color %>' id='stack<%=  id %>'>
 	<h2><%= name %></h2>
 	<ul class='issues'></ul>
 	<a href="" class='loggedin addissue'>Add issue</a></div>
@@ -75,6 +76,7 @@
 
 var user = $.QueryString['user'];
 var repo = $.QueryString['repo'];
+var milestone = $.QueryString['milestone'];
 
 $('title').html(repo+ ' by '+ user);
 $('#repo').html(user+'/'+repo).attr('href', 'https://github.com/'+user+'/'+repo);
@@ -146,10 +148,10 @@ var labelsPromise = GitHub('/repos/'+user+'/'+repo+'/labels', null, function(dat
 	labels = data;
 	drawStacks();
 });
-var openIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=open', null, function(data){
+var openIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=open&milestone='+milestone, null, function(data){
 	issues = issues.concat(data);
 });
-var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=closed', null, function(data){
+var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=closed&milestone='+milestone, null, function(data){
 	issues = issues.concat(data);
 });
 
@@ -219,7 +221,8 @@ var Board = Backbone.View.extend({
 		GitHub('POST', '/repos/'+user+'/'+repo+'/issues', {
 			title: title,
 			labels: labels,
-			state: state
+			state: state,
+			milestone: milestone
 		}, function(data){
 			// do some shit like render it
 		});
