@@ -75,22 +75,9 @@ $('#settings').click(function(){
 
 var repos = [];
 
-var reposPromise = $.ajax({
-	url: 'https://api.github.com/user/repos',
-	beforeSend: function (xhr) {
-		var username = localStorage['username'];
-		var password = localStorage['password'];
-		xhr.setRequestHeader ("Authorization", "Basic "+btoa (username+':'+password) );
-	},
-	success: function(data){
-		repos = repos.concat(data);
-	},
-	error: function(){
-		alert('Error logging into github');
-	}
+var reposPromise = GitHub('/user/repos', {}, function(data){
+	repos = repos.concat(data);
 });
-
-
 
 
 /*

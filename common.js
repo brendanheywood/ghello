@@ -1,4 +1,20 @@
 
+var GitHub = function(url, data, success, error){
+
+	return $.ajax({
+		url: 'https://api.github.com'+url,
+		beforeSend: function (xhr) {
+			var username = localStorage['username'];
+			var password = localStorage['password'];
+			xhr.setRequestHeader ("Authorization", "Basic "+btoa (username+':'+password) );
+		},
+		success: success,
+		error: error
+	});
+
+};
+
+
 function focusOrCreateTab(url) {
   chrome.windows.getAll({"populate":true}, function(windows) {
     var existing_tab = null;
