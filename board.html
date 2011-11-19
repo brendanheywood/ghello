@@ -47,8 +47,6 @@
 
 
 
-
-
 <script src="lib/jquery-ui/ui/jquery.ui.core.js"></script>
 <script src="lib/jquery-ui/ui/jquery.ui.widget.js"></script>
 <script src="lib/jquery-ui/ui/jquery.ui.mouse.js"></script>
@@ -57,99 +55,28 @@
 <script src="lib/bootstrap/bootstrap-dropdown.js"></script>
 <script src="lib/underscore-1.2.1.js"></script>
 <script src="lib/backbone-0.5.3.js"></script>
-<script type="text/javascript">
-var Stack = Backbone.Model.extend({
-});
 
-/*
- * - title
- * - number
- * - tags
- * - assignee
- */
-var Issue = Backbone.Model.extend({
-	setStack: function(id){
-		// remove other stacks
-		// add this stack
-	}
-});
+<script type="text/template" id="issue-template">
+	<li>
+	<span class='title'><%= title %> <span class='num'>#<%= number %></span></span>
+	<% if (tags){ %>
+		<ul class='labels'>
+			<% _.each (tags, function(tag){ %><li style='border-color: #<%= tag.color %>'><%= tag.name %></li><% }); %>
+		</ul>
+	<% } %>
+	<% if (assignee){ %>
+		<a href='#' class='avatar'><img width=24 height=24 src='<%= assignee.avatar_url %>'></a>
+	<% } %>
+	</li>
+</script>
+<script type="text/template" id="stack-template">
+	<div class='stack' style='background-color: #<%= color %>' id='stack<%=  id %>'>
+	<h2><%= name %></h2>
+	<ul class='cards'></ul>
+	<a class='loggedin addcard'>Add issue</a></div>
+</script>
 
-
-
-
-/*
- * - user
- * - repo
- * - milestone (optional)
- */
-
-var Board = Backbone.Collection.extend({
-	model: Issue,
-	
-	/*
-	 * return a list of stacks
-	 */
-	stacks: function(){
-	},
-
-	
-
-});
-
-
-
-
-
-var IssueView = Backbone.View.extend({
-	tagName: "li",
-//	template: _.template($('#issue-template').html() ),
-
-	render: function() {
-		$(this.el).html(this.template(this.model.toJSON()));
-		this.setText();
-		return this;
-	},
-
-});
-
-
-
-
-
-
-
-
-var AppView = Backbone.View.extend({
-	el: $('body'),
-	events: {
-		"click #addstack": "showAddStackPrompt"
-	},
-	initialize: function(){
-		
-	},
-
-	showAddStackPrompt: function(){
-		alert('Not supported yet :)');
-	}
-	
-
-});
-
-
-var App = new AppView();
-
-
-
-
-
-
-
-
-
-
-
-
-
+<script>
 
 
 
@@ -222,9 +149,14 @@ function drawStacks(){
 		color: '888888'
 	});
 	var c;
-	$.each(stacks, function(index, val){
-		var stack = stacks[index];
-		$('.stacks').append("<div class='stack' style='background-color: #"+stack.color+"' id='stack"+index+"'><h2>"+stack.name+"</h2><ul class='cards'></ul><a class='loggedin addcard'>Add issue</a></div>");
+
+	//var issueTemplate = _.template( $('#issue-template').html() );
+	var stackTemplate = _.template( $('#stack-template').html() );
+
+	$.each(stacks, function(index, stack){
+		stack.id = index;
+		$('.stacks').append( stackTemplate(stack) );
+
 	});
 
 }
@@ -289,44 +221,28 @@ function getStack(issue){
  * When both the labels and the issues are loaded then render the issues
  */
 $.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
-	
-	$.each(issues, function(index, val){
 
-		var issue = issues[index];
+
+	var issueTemplate = _.template( $('#issue-template').html() );
+
+	
+	$.each(issues, function(index, issue){
 
 		// what stack is it?
 		var stack = getStack(issue);
 
 		// draw an issue
-		var html = "<li>";
-		html += "<span class='title'>"+issue.title;
-		html += " <span class='num'>#"+issue.number+"</span>";
-		html += "</span>";
-		var tags = [];
+		issue.tags = [];
 		if (issue.labels){
 			$.each(issue.labels, function(i, v){
 				var matches = v.name.match(/S\d+\s(.*)/);
 				if (!matches){
-					tags.push(v);
+					issue.tags.push(v);
 				}
 			});
 		}
-		if (tags.length != 0){
-			html += "<ul class='labels'>";
-			$.each(tags, function(i, v){
-				html += "<li style='border-color: #"+v.color+"'>"+v.name+"</li>";
-			});
-			html += "</ul>";
-		}
-		if (issue.assignee){
-			html += "<a href='#' class='avatar'><img width=24 height=24 src='"+issue.assignee.avatar_url+"'></a>";
-		}
 
-		html += "</li>";
-		var li = $(html);
-		$('#stack'+stack+' > ul').append(li);
-
-
+		$('#stack'+stack+' > ul').append( issueTemplate(issue) );
 	});
 
 	var loggedin = false;
