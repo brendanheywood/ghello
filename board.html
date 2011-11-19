@@ -54,7 +54,7 @@
 
 <script type="text/template" id="issue-template">
 	<li class="issue" id="<%= id  %>">
-	<span class='title'><%= title %> <a href='#' class='num'>#<%= number %></a></span>
+	<span class='title'><%= title %></span> <a href='#' class='num'>#<%= number %></a>
 	<% if (tags){ %>
 		<ul class='labels'>
 			<% _.each (tags, function(tag){ %><li style='border-color: #<%= tag.color %>'><%= tag.name %></li><% }); %>
@@ -182,6 +182,7 @@ var Board = Backbone.View.extend({
 		"click #addstack":  "addStack",
 		"click .addissue":  "addIssue",
 		"click .num":       "openIssue",
+		"click .issue":     "editIssue",
 	},
 	addStack: function(){
 		alert('Not yet implemented');
@@ -192,7 +193,22 @@ var Board = Backbone.View.extend({
 		window.open('https://github.com/'+user+'/'+repo+'/issues/'+issueNum);
 		return false;
 	},
-	addIssue: function(a, b, c){
+	editIssue: function(){
+		var issue$ = $(event.target).closest('.issue');
+		var title = issue$.find('.title').text();
+		var title = prompt('Title of new issue:', title);
+		var issueId = $(event.target).closest('.issue').attr('id');
+		for(var c=0; c<issues.length; c++){
+			if (issues[c].id == issueId){ break; }
+		}
+		var issue = issues[c];
+		GitHub('PATCH', '/repos/'+user+'/'+repo+'/issues/'+issue.number, {
+			title: title,
+		}, function(){
+			issue$.find('.title').text(title);
+		});
+	},
+	addIssue: function(){
 		var stackId = $(event.target).closest('.stack').attr('id');
 		var title = prompt('Title of new issue:');
 
