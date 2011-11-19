@@ -1,0 +1,120 @@
+<html>
+<meta charset="utf-8">
+<head><title></title></head>
+<link rel="stylesheet" href="lib/bootstrap/bootstrap.css">
+<script src="lib/jquery.1.7.0.min.js"></script>
+<link rel="stylesheet" href="css/board.css">
+<body>
+
+<div class="topbar" data-dropdown="dropdown">
+  <div class="topbar-inner">
+    <div class="container-fluid">
+      <a class="brand" target="_blank" href="https://github.com/brendanheywood/ghello">Ghello</a>
+      <ul class="nav">
+        <li class="active"><a href="#" id="profile">Profile</a></li>
+        <li class=""><a href="#" target="_blank" id="github-profile">Github profile for <span></span> →</a></li>
+      </ul>
+      <ul class="nav secondary-nav">
+        <li><a href="#" id="settings">Options</a></li>
+<!--
+        <li class="dropdown"><a href="#" class="dropdown-toggle">Settings</a>
+          <ul class="dropdown-menu">
+            <li><a href="#" id="settings">Options</a></li>
+          </ul>
+        </li>
+-->
+      </ul>
+<!--
+      <p class="pull-right">Logged in as <a id="loggedin" href="#">username</a></p>
+-->
+    </div>
+  </div>
+</div>
+
+<div id="loading">
+	<div class="alert-message warning"><p><strong>Loading...</strong></p></div>
+</div>
+<div class="repos"></div>
+
+
+<script src="lib/jquery-ui/ui/jquery.ui.core.js"></script>
+<script src="lib/jquery-ui/ui/jquery.ui.widget.js"></script>
+<script src="lib/jquery-ui/ui/jquery.ui.mouse.js"></script>
+<script src="lib/jquery-ui/ui/jquery.ui.draggable.js"></script>
+<script src="lib/jquery-ui/ui/jquery.ui.sortable.js"></script>
+<script src="lib/bootstrap/bootstrap-dropdown.js"></script>
+<script src="lib/underscore-1.2.1.js"></script>
+<script src="lib/backbone-0.5.3.js"></script>
+<script src="common.js"></script>
+
+<script type="text/template" id="repo-template">
+<div class='repo' id='repo<%=  id %>'>
+	<h2><a href="board.html?user=<%= owner.login %>&repo=<%= name %>"><%= name %></a></h2>
+	<div>
+		<p><a target="_blank" href="<%= html_url %>"><%= html_url %></a></p>
+		<p><%= description %></p>
+		<p>Open issues: <%= open_issues %></p>
+	</div>
+</div>
+</script>
+
+<script>
+
+
+
+var user = $.QueryString['user'];
+
+$('title').html(user);
+$('#github-profile').attr('href', 'https://github.com/'+user);
+$('#github-profile span').html(user);
+$('#settings').click(function(){
+
+	focusOrCreateTab( chrome.extension.getURL('options.html') );
+});
+
+
+var repos = [];
+
+var reposPromise = $.ajax({
+	url: 'https://api.github.com/user/repos',
+	beforeSend: function (xhr) {
+		var username = localStorage['username'];
+		var password = localStorage['password'];
+		xhr.setRequestHeader ("Authorization", "Basic "+btoa (username+':'+password) );
+	},
+	success: function(data){
+		repos = repos.concat(data);
+	},
+	error: function(){
+		alert('Error logging into github');
+	}
+});
+
+
+
+
+/*
+ * When both the labels and the issues are loaded then render the issues
+ */
+$.when(reposPromise).then(function(){
+	$('#loading').fadeOut('slow');
+
+	var loggedin = false;
+	// no settings
+	// setting don't work
+	// logged in
+
+	if (repos.length == 1){
+		loggedin = true;
+	} 
+
+	var repoTemplate = _.template( $('#repo-template').html() );
+	
+	$.each(repos, function(index, repo){
+		$('.repos').append( repoTemplate(repo) );
+	});
+});
+
+</script>
+</body>
+</html>

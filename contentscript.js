@@ -3,12 +3,4 @@
  * If so then it shows the page action to show the issues board
  */
 
-
-
-var regex = /(.*)\/(.*)\/issues/;
-
-if (regex.test(window.location)) {
-	chrome.extension.sendRequest('showIcon', function(response) {
-	});
-}
-
+chrome.extension.sendRequest('showIcon', function(response) {});

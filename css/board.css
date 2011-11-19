@@ -1,4 +1,17 @@
 
+.repos {
+	width: 600px;
+	margin: 50px auto 10px;
+}
+.repos > div {
+	border-bottom: 1px solid #aaa;
+}
+
+.repos > div > div {
+	padding-left: 40px;
+}
+
+
 #loading {
 	background: rgba(0, 0, 0, .5);
 	width: 100%;
