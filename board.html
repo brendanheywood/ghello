@@ -192,8 +192,21 @@ var Board = Backbone.View.extend({
 		window.open('https://github.com/'+user+'/'+repo+'/issues/'+issueNum);
 		return false;
 	},
-	addIssue: function(){
-		alert('Not yet implemented');
+	addIssue: function(a, b, c){
+		var stackId = $(event.target).closest('.stack').attr('id');
+		var title = prompt('Title of new issue:');
+
+		stackId =  stackId.replace('stack', '');
+		var stack = stacks[stackId];
+		var state = stack.labelId == -1 ? 'closed' : 'open';
+		var labels = stack.label ? [stack.label] : null;
+		GitHub('POST', '/repos/'+user+'/'+repo+'/issues', {
+			title: title,
+			labels: labels,
+			state: state
+		}, function(data){
+			// do some shit like render it
+		});
 		return false;
 	}
 
