@@ -67,7 +67,7 @@
 	</li>
 </script>
 <script type="text/template" id="stack-template">
-	<div class='stack <%= name  %>' style='background-color: #<%= color %>' id='stack<%=  id %>'>
+	<div class='stack <%= name == 'Closed' ? ' closed' : ''  %>' style='background-color: #<%= color %>' id='stack<%=  id %>'>
 	<h2><%= name %></h2>
 	<ul class='issues'></ul>
 	<a href="" class='loggedin addissue'>Add issue</a></div>
