@@ -34,17 +34,9 @@
 </div>
 
 <div id="loading">
-<div class="alert-message warning">
-        <p><strong>Loading...</strong></p>
-      </div>
-
+	<div class="alert-message warning"><p><strong>Loading...</strong></p></div>
 </div>
-
-
-<div class="stacks">
-
-</div>
-
+<div class="stacks"></div>
 
 
 <script src="lib/jquery-ui/ui/jquery.ui.core.js"></script>
@@ -150,7 +142,6 @@ function drawStacks(){
 	});
 	var c;
 
-	//var issueTemplate = _.template( $('#issue-template').html() );
 	var stackTemplate = _.template( $('#stack-template').html() );
 
 	$.each(stacks, function(index, stack){
@@ -160,10 +151,6 @@ function drawStacks(){
 	});
 
 }
-
-function drawCards(){
-}
-
 
 var labelsPromise = $.ajax({
 	url: 'https://api.github.com/repos/'+user+'/'+repo+'/labels',
@@ -222,9 +209,7 @@ function getStack(issue){
  */
 $.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
 
-
 	var issueTemplate = _.template( $('#issue-template').html() );
-
 	
 	$.each(issues, function(index, issue){
 
@@ -246,7 +231,6 @@ $.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
 	});
 
 	var loggedin = false;
-
 
 	// should only do this is we are logged in (and have permission?)
 	if (loggedin){
