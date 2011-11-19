@@ -53,8 +53,8 @@
 <script src="common.js"></script>
 
 <script type="text/template" id="issue-template">
-	<li>
-	<span class='title'><%= title %> <span class='num'>#<%= number %></span></span>
+	<li class="issue" id="<%= id  %>">
+	<span class='title'><%= title %> <a href='#' class='num'>#<%= number %></a></span>
 	<% if (tags){ %>
 		<ul class='labels'>
 			<% _.each (tags, function(tag){ %><li style='border-color: #<%= tag.color %>'><%= tag.name %></li><% }); %>
@@ -86,7 +86,7 @@ $('#settings').click(function(){
 var issues = [];
 var labels = [];
 var labels2index = {};
-
+var stacks = [];
 
 function drawStacks(){
 	// for each label, make a stack if it starts with 'S\d+\s'
@@ -94,12 +94,14 @@ function drawStacks(){
 
 	$('#loading').fadeOut('slow');
 
-	var stacks = [];
+	stacks = [];
 
 	// Add the first backlog stack
 	stacks.push({
 		name: 'Backlog',
-		color: 'eeeeee'
+		color: 'eeeeee',
+		labelId: 0,
+		label: null
 	});
 	labels = labels.sort(function(a,b){
 		return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
@@ -114,14 +116,18 @@ function drawStacks(){
 		labels2index[label.name] = ++labelIndex;
 		stacks.push({
 			name: matches[1],
-			color: label.color
+			color: label.color,
+			labelId: index,
+			label: label.name
 		});
 	});
 
 	// Add the last closed stack
 	stacks.push({
 		name: 'Closed',
-		color: '888888'
+		color: '888888',
+		labelId: -1,
+		label: null
 	});
 	var c;
 
@@ -129,20 +135,21 @@ function drawStacks(){
 
 	$.each(stacks, function(index, stack){
 		stack.id = index;
-		$('.stacks').append( stackTemplate(stack) );
+		var el = stackTemplate(stack);
+		$( el ).appendTo('.stacks');
 
 	});
 
 }
 
-var labelsPromise = GitHub('/repos/'+user+'/'+repo+'/labels', {}, function(data){
+var labelsPromise = GitHub('/repos/'+user+'/'+repo+'/labels', null, function(data){
 	labels = data;
 	drawStacks();
 });
-var openIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=open', {}, function(data){
+var openIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=open', null, function(data){
 	issues = issues.concat(data);
 });
-var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=closed', {}, function(data){
+var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=closed', null, function(data){
 	issues = issues.concat(data);
 });
 
@@ -172,11 +179,17 @@ function getStack(issue){
 var Board = Backbone.View.extend({
 	el: $('body'),
 	events: {
-		"click #addstack": "addStack",
-		"click .addissue": "addIssue"
+		"click #addstack":  "addStack",
+		"click .addissue":  "addIssue",
+		"click .num":       "openIssue",
 	},
 	addStack: function(){
 		alert('Not yet implemented');
+		return false;
+	},
+	openIssue: function(event){
+		var issueNum = $(event.target).text().replace('#', '');
+		window.open('https://github.com/'+user+'/'+repo+'/issues/'+issueNum);
 		return false;
 	},
 	addIssue: function(){
@@ -219,13 +232,50 @@ $.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
 
 	// should only do this is we are logged in (and have permission?)
 	if (loggedin){
+/*
 		$(".stacks").sortable({
 		});
+*/
 		$(".issues").sortable({
 			connectWith: '.issues',
 			stop: function(event, ui){
-				$(this).css('border', 'red');
-				var issue = this;
+				var stackId = $(event.target).closest('.stack').attr('id');
+				var issueId = $(event.target).closest('.issue').attr('id');
+				stackId =  stackId.replace('stack', '');
+				var label = stacks[stackId];
+				for(var c=0; c<issues.length; c++){
+					if (issues[c].id == issueId){ break; }
+				}
+				var issue = issues[c];
+
+				// find current labels
+				var oldLabels = issue.labels;
+
+				// remove all stack labels
+				var newLabels = _.filter(oldLabels, function(label){
+					var matches = label.name.match(/S\d+\s(.*)/);
+					return !matches;
+				});
+
+				// prep raw labels for saving
+				var labels = _.map(newLabels, function(label){
+					return label.name;
+				});
+				var state = 'open';
+				if (label && label.id != 0){
+					if (!label.label){
+						state = 'closed';
+					} else {
+						labels.push(label.label);
+					}
+				}
+				GitHub('PATCH', '/repos/'+user+'/'+repo+'/issues/'+issue.number, {
+					labels: labels,
+					state: state
+				});
+
+				// if moving to close then do that ajax
+				// if moving to another stack then do that ajax
 				var a = event;
 			}
 		});

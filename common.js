@@ -1,8 +1,28 @@
 
-var GitHub = function(url, data, success, error){
+var GitHub = function(){
+
+	var args = Array.prototype.slice.call(arguments);
+
+	var method = args.shift();
+	if (method.substr(0,1) == '/'){
+		args.unshift(method);
+		method = 'GET';
+	}
+	var url     = args.shift();
+	var data    = args.shift();
+	var success = args.shift();
+	var error   = args.shift();
+
+	if (data){
+		data = JSON.stringify(data);
+	}
+
 
 	return $.ajax({
 		url: 'https://api.github.com'+url,
+		type: method,
+		data: data,
+		processData: false,
 		beforeSend: function (xhr) {
 			var username = localStorage['username'];
 			var password = localStorage['password'];
@@ -51,4 +71,27 @@ function focusOrCreateTab(url) {
         return b;
     })(window.location.search.substr(1).split('&'))
 })(jQuery);
+
+
+var Ghello = {};
+
+Ghello.Issue = Backbone.Model.extend({
+
+	/*
+	 * pass it a stack numner 0..x or -1 for closed (not a stack id)
+	 */
+	moveIssueToStack: function(stack){
+		alert('crap '+stack);
+	}
+});
+
+
+
+
+
+
+
+
+
+
 

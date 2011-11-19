@@ -75,7 +75,7 @@ $('#settings').click(function(){
 
 var repos = [];
 
-var reposPromise = GitHub('/user/repos', {}, function(data){
+var reposPromise = GitHub('/user/repos', null, function(data){
 	repos = repos.concat(data);
 });
 
