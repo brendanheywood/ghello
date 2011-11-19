@@ -238,7 +238,7 @@ $.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
 			});
 		}
 
-		$('#stack'+stack+' > ul').append( issueTemplate(issue) );
+		$('#stack'+stack+' > ul').prepend( issueTemplate(issue) );
 	});
 
 	var loggedin = true;
