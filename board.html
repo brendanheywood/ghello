@@ -135,33 +135,15 @@ function drawStacks(){
 
 }
 
-var labelsPromise = $.ajax({
-	url: 'https://api.github.com/repos/'+user+'/'+repo+'/labels',
-	success: function(data){
-		labels = data;
-		drawStacks();
-	},
-	error: function(){
-		alert('Error loading labels');
-	}
+var labelsPromise = GitHub('/repos/'+user+'/'+repo+'/labels', {}, function(data){
+	labels = data;
+	drawStacks();
 });
-var openIssuesPromise = $.ajax({
-	url: 'https://api.github.com/repos/'+user+'/'+repo+'/issues?state=open',
-	success: function(data){
-		issues = issues.concat(data);
-	},
-	error: function(){
-		alert('Error loading open issues');
-	}
+var openIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=open', {}, function(data){
+	issues = issues.concat(data);
 });
-var closedIssuesPromise = $.ajax({
-	url: 'https://api.github.com/repos/'+user+'/'+repo+'/issues?state=closed',
-	success: function(data){
-		issues = issues.concat(data);
-	},
-	error: function(){
-		alert('Error loading closed issues');
-	}
+var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=closed', {}, function(data){
+	issues = issues.concat(data);
 });
 
 
