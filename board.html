@@ -3,7 +3,9 @@
 <head><title></title></head>
 <link rel="stylesheet" href="lib/bootstrap/bootstrap.css">
 <script src="lib/jquery.1.7.0.min.js"></script>
+<!--
 <link rel="stylesheet" href="lib/jquery-ui/ui/themes/base/jquery.ui.all.css">
+-->
 <link rel="stylesheet" href="css/board.css">
 <body>
 
@@ -64,16 +66,10 @@
 <script type="text/template" id="stack-template">
 	<div class='stack' style='background-color: #<%= color %>' id='stack<%=  id %>'>
 	<h2><%= name %></h2>
-	<ul class='cards'></ul>
-	<a class='loggedin addcard'>Add issue</a></div>
+	<ul class='issues'></ul>
+	<a href="" class='loggedin addissue'>Add issue</a></div>
 </script>
-
 <script>
-
-
-
-
-
 
 (function($) {
     $.QueryString = (function(a) {
@@ -204,6 +200,26 @@ function getStack(issue){
 }
 
 
+var Board = Backbone.View.extend({
+	el: $('body'),
+	events: {
+		"click #addstack": "addStack",
+		"click .addissue": "addIssue"
+	},
+	addStack: function(){
+		alert('Not yet implemented');
+		return false;
+	},
+	addIssue: function(){
+		alert('Not yet implemented');
+		return false;
+	}
+
+});
+
+var board = new Board();
+
+
 /*
  * When both the labels and the issues are loaded then render the issues
  */
@@ -230,14 +246,19 @@ $.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
 		$('#stack'+stack+' > ul').append( issueTemplate(issue) );
 	});
 
-	var loggedin = false;
+	var loggedin = true;
 
 	// should only do this is we are logged in (and have permission?)
 	if (loggedin){
 		$(".stacks").sortable({
 		});
-		$(".cards").sortable({
-			connectWith: '.cards'
+		$(".issues").sortable({
+			connectWith: '.issues',
+			stop: function(event, ui){
+				$(this).css('border', 'red');
+				var issue = this;
+				var a = event;
+			}
 		});
 	};
 });

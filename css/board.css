@@ -1,3 +1,4 @@
+
 #loading {
 	background: rgba(0, 0, 0, .5);
 	width: 100%;
@@ -40,11 +41,11 @@
 	margin-left: 0.3em;
 }
 
-.cards {
+.issues {
 	padding: 10px 0 10px 0;
 	margin: 0;
 }
-.cards li {
+.issues li {
 	background: white;
 	margin: 0 0 6px 0;
 	padding: 8px 12px;
@@ -85,11 +86,11 @@
 	line-height: 13px;
 }
 
-.cards li.ui-sortable-helper {
+.issues li.ui-sortable-helper {
 	box-shadow: 0 5px 15px rgba(0,0,0,.9);
 	-webkit-transform: rotate(4deg);
 }
-.cards li.ui-sortable-placeholder {
+.issues li.ui-sortable-placeholder {
 	visibility: visible !important;
 	background: #999;
 	margin-top: -2px;
@@ -103,7 +104,7 @@
 	display: block;
 }
 
-.addcard {
+.addissue {
 	border-radius: 3px;
 	color: #999;
 	margin: 0;
