@@ -164,7 +164,7 @@ function getStack(issue){
 
 	// if issues is closed then it is always last stack
 	if (issue.state == "closed"){
-		return labels.length - 2;
+		return stacks.length - 1;
 	}
 
 	// run through labels, first match exit
