@@ -49,17 +49,23 @@
 
 <script type="text/template" id="milestone-template">
 <li class='milestone' id='ms<%=  number %>'>
-	<h3><a href="board.html?user=<%= user %>&repo=<%= repo %>&milestone=<%= number %>"><%= title %></a></h3>
-	<div>
-		<p><%= description %></p>
-		<p>Open issues: <%= open_issues %></p>
-		<p>Closed issues: <%= closed_issues %></p>
-	</div>
+	<h3><a href="board.html?user=<%= user %>&repo=<%= repo %>&milestone=<%= number %>">
+		<span class="open" title="Open issues"><%= open_issues %></span>
+		<span class="closed" title="Closed issues"><%= closed_issues %></span>
+		Milestone <%= number %>: 
+		<%= title %>
+	</a></h3>
+	<p><%= description %></p>
+	<a target="_blank" href="https://github.com/<%= user %>/<%= repo %>/issues/milestones/<%= number %>/edit">Edit milestone</a>
 </li>
 </script>
 <script type="text/template" id="repo-template">
 <div class='repo' id='repo<%=  id %>'>
-	<h2><a href="#"><span>▶</span> <span><%= name %></span></a></h2>
+	<h2><a href="#"><span>▶</span>
+		<span class="open" title="Open issues"><%= open_issues %></span>
+		<span class="user"><%= user %></span> / 
+		<span class="name"><%= name %></span>
+	</a></h2>
 	<div>
 		<ul class="milestones"></ul>
 		<p><%= description %></p>
@@ -86,7 +92,8 @@ $('#settings').click(function(){
 
 var repos = [];
 
-var reposPromise = GitHub('/user/repos', null, function(data){
+//var reposPromise = GitHub('/user/repos', null, function(data){
+var reposPromise = GitHub('/user/watched', null, function(data){
 	repos = repos.concat(data);
 });
 
@@ -109,6 +116,10 @@ $.when(reposPromise).then(function(){
 	var repoTemplate = _.template( $('#repo-template').html() );
 	
 	$.each(repos, function(index, repo){
+		var user = repo.html_url;
+		user = user.replace(/https:\/\/github.com\//, '');
+		user = user.replace(/\/.*/, '');
+		repo.user = user;
 		$('.repos').append( repoTemplate(repo) );
 	});
 });
@@ -124,7 +135,8 @@ var Profile = Backbone.View.extend({
 	showMilestones: function(){
 		var el = $(event.target).closest('a');
 		el.find('span:first').text('▼');
-		var repo = el.find('span:nth-child(2)').text();
+		var user = el.find('.user').text();
+		var repo = el.find('.name').text();
 		GitHub('/repos/'+user+'/'+repo+'/milestones', null, function(data){
 			var ul = el.closest('.repo').find('.milestones');
 			
@@ -132,8 +144,17 @@ var Profile = Backbone.View.extend({
 			$.each(data, function(i, ms){
 				ms.user = user;
 				ms.repo = repo;
-				ul.append( milestoneTemplate(ms) );
+				ul.prepend( milestoneTemplate(ms) );
 			});
+			ul.append( milestoneTemplate({
+				user: user,
+				repo: repo,
+				open_issues: '',
+				closed_issues: '',
+				title: 'All issues',
+				description: 'All issues across all milestones',
+				number: '*'
+			}) );
 		});
 
 		return false;

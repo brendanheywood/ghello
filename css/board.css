@@ -7,6 +7,22 @@
 	border-bottom: 1px solid #aaa;
 }
 
+.repos .open,
+.repos .closed {
+	display: inline-block;
+	padding: 0 10px;
+	background: #A00;
+	color: white;
+	border-radius: 7px;
+	font-size: 13px;
+	line-height: 26px;
+	vertical-align: middle;
+
+}
+.repos .open {
+	background: #393;
+}
+
 .repos > div > div {
 	padding-left: 40px;
 }
