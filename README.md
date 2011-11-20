@@ -28,11 +28,11 @@ Because the goal is to have zero state stored in the extension, with all data in
  - Votes are left out for now (not sure on a convention?)
  - Tasks can only be assigned to one person at a time
 
-## To hard :(
+## Too hard for now... :(
 
 For now at least these aren't in the plan:
 
- - Live updating - will just have a refresh button or poll (but will probably do a delta ajax call for speed)
+ - Live/comet updating - will just have a refresh button or poll (but will probably do a delta ajax call for speed)
 
 ## Thanks!:
 
