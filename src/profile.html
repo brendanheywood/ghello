@@ -98,6 +98,8 @@ var repos = [];
 //var reposPromise = GitHub('/user/repos', null, function(data){
 var reposPromise = GitHub('/user/watched', null, function(data){
 	repos = repos.concat(data);
+}, function(){
+	alert("Something is wrong, probably your username/password isn't set or is wrong");
 });
 
 
