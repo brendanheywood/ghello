@@ -20,7 +20,7 @@ chrome.extension.onRequest.addListener(onRequest);
  * Called when the pageAction icon is clicked
  * Open a new tab which shows the current issues page in Ghello mode
  */ 
-chrome.pageAction.onClicked.addListener(function(tab) {
+chrome.browserAction.onClicked.addListener(function(tab) {
 	var url = tab.url;
 	var parts = url.split('/');
 
