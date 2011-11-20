@@ -51,14 +51,25 @@
 
 <script type="text/template" id="milestone-template">
 <li class='milestone' id='ms<%=  number %>'>
-	<h3><a href="board.html?user=<%= user %>&repo=<%= repo %>&milestone=<%= number %>">
-		<span class="open" title="Open issues"><%= open_issues %></span>
-		<span class="closed" title="Closed issues"><%= closed_issues %></span>
-		Milestone <%= number %>: 
+<%
+var total_issues = open_issues + closed_issues;
+var percent = 0;
+if (closed_issues){
+	percent = Math.round(100 * closed_issues / total_issues);
+	
+}
+
+%>
+
+	<h3>
+	<span class="progress-bar"><span class="progress" style="width: <%= percent %>%">&nbsp;</span><span class="percent"><%= percent %>%</span></span>
+	<a href="board.html?user=<%= user %>&repo=<%= repo %>&milestone=<%= number %>">
 		<%= title %>
 	</a>
 		<small><a target="_blank" href="https://github.com/<%= user %>/<%= repo %>/issues/milestones/<%= number %>/edit">edit</a></small>
 	</h3>
+
+	<p>Open issues: <%= open_issues %> - Closed issues: <%= closed_issues %></p>
 	<p><%= description %></p>
 </li>
 </script>
@@ -99,7 +110,7 @@ var repos = [];
 var reposPromise = GitHub('/user/watched', null, function(data){
 	repos = repos.concat(data);
 }, function(){
-	alert("Something is wrong, probably your username/password isn't set or is wrong");
+	alert("Something is wrong, probably your username/password isn't set or is wrong. Click Options in the top right");
 });
 
 
@@ -139,29 +150,40 @@ var Profile = Backbone.View.extend({
 	},
 	showMilestones: function(){
 		var el = $(event.target).closest('a');
-		el.find('span:first').text('▼');
-		var user = el.find('.user').text();
-		var repo = el.find('.name').text();
-		GitHub('/repos/'+user+'/'+repo+'/milestones', null, function(data){
-			var ul = el.closest('.repo').find('.milestones');
-			
-			var milestoneTemplate = _.template( $('#milestone-template').html() );
-			$.each(data, function(i, ms){
-				ms.user = user;
-				ms.repo = repo;
-				ul.prepend( milestoneTemplate(ms) );
+		var re = el.closest('.repo');
+		if (el.hasClass('active')){
+			el.removeClass('active');
+			el.find('span:first').text('▶');
+			re.find('ul').hide('slow', function(){
+				$(this).html('');
 			});
-			ul.append( milestoneTemplate({
-				user: user,
-				repo: repo,
-				open_issues: '',
-				closed_issues: '',
-				title: 'All issues',
-				description: 'All issues across all milestones',
-				number: '*'
-			}) );
-		});
-
+		} else {
+			el.addClass('active');
+			el.find('span:first').text('▼');
+			var user = el.find('.user').text();
+			var repo = el.find('.name').text();
+			GitHub('/repos/'+user+'/'+repo+'/milestones?sort=completeness', null, function(data){
+				var ul = el.closest('.repo').find('.milestones');
+				ul.hide();
+				
+				var milestoneTemplate = _.template( $('#milestone-template').html() );
+				$.each(data, function(i, ms){
+					ms.user = user;
+					ms.repo = repo;
+					ul.prepend( milestoneTemplate(ms) );
+				});
+				ul.append( milestoneTemplate({
+					user: user,
+					repo: repo,
+					open_issues: '',
+					closed_issues: '',
+					title: 'All issues',
+					description: 'All issues across all milestones',
+					number: '*'
+				}) );
+				ul.show('slow');
+			});
+		}
 		return false;
 	},
 });
