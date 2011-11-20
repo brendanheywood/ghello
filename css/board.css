@@ -1,7 +1,14 @@
 
+.brand img {
+	vertical-align: top;
+	border: 1px solid white;
+	border-radius: 3px;
+}
+
 .repos {
 	width: 600px;
-	margin: 50px auto 10px;
+	margin: 45px auto 10px;
+	padding-top: 20px;
 }
 .repos > div {
 	border-bottom: 1px solid #aaa;
