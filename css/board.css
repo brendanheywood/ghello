@@ -6,6 +6,10 @@
 .repos > div {
 	border-bottom: 1px solid #aaa;
 }
+.repos .milestone p {
+	padding-left: 50px;
+}
+
 
 .repos .open,
 .repos .closed {

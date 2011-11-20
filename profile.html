@@ -34,7 +34,9 @@
 <div id="loading">
 	<div class="alert-message warning"><p><strong>Loading...</strong></p></div>
 </div>
-<div class="repos"></div>
+<div class="repos">
+<h1>Watched repos: <small>Manage this list in <a target="_blank" href="https://github.com/">your github profile</a></small></h1>
+</div>
 
 
 <script src="lib/jquery-ui/ui/jquery.ui.core.js"></script>
@@ -54,9 +56,10 @@
 		<span class="closed" title="Closed issues"><%= closed_issues %></span>
 		Milestone <%= number %>: 
 		<%= title %>
-	</a></h3>
+	</a>
+		<small><a target="_blank" href="https://github.com/<%= user %>/<%= repo %>/issues/milestones/<%= number %>/edit">edit</a></small>
+	</h3>
 	<p><%= description %></p>
-	<a target="_blank" href="https://github.com/<%= user %>/<%= repo %>/issues/milestones/<%= number %>/edit">Edit milestone</a>
 </li>
 </script>
 <script type="text/template" id="repo-template">
