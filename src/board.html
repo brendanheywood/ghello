@@ -56,6 +56,11 @@
 <script type="text/template" id="issue-template">
 	<li class="issue" id="<%= id  %>">
 	<span class='title'><%= title %></span> <a href='#' class='num'>#<%= number %></a>
+	<% if (comments){ %>
+	<div class="summary">
+	<span class="commentscount"><%= comments %></span>
+	</div>
+	<% } %>
 	<% if (tags){ %>
 		<ul class='labels'>
 			<% _.each (tags, function(tag){ %><li style='border-color: #<%= tag.color %>'><%= tag.name %></li><% }); %>
