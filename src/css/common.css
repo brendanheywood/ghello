@@ -202,3 +202,14 @@ body {
 	display: block;
 	background: #eee;
 }
+.addform {
+
+}
+.addform textarea {
+	width: 100%;
+	margin-bottom: 3px;
+}
+
+
+
+

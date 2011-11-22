@@ -67,10 +67,17 @@
 	</li>
 </script>
 <script type="text/template" id="stack-template">
-	<div class='stack <%= name == 'Closed' ? ' closed' : ''  %>' style='background-color: #<%= color %>' id='stack<%=  id %>'>
+<div class='stack <%= name == 'Closed' ? ' closed' : ''  %>' style='background-color: #<%= color %>' id='stack<%=  id %>'>
 	<h2><%= name %></h2>
 	<ul class='issues'></ul>
-	<a href="" class='loggedin addissue'>Add issue</a></div>
+	<a href="" class='loggedin addissue'>Add issue</a>
+	<div class="addform" style="display: none;">
+		<textarea></textarea>
+		<button class="add btn success">Add</button>
+		<button class="cancel btn">X</button>
+	</div>
+
+</div>
 </script>
 <script>
 
@@ -181,10 +188,12 @@ function getStack(issue){
 var Board = Backbone.View.extend({
 	el: $('body'),
 	events: {
-		"click #addstack":  "addStack",
-		"click .addissue":  "addIssue",
-		"click .num":       "openIssue",
-		"click .issue":     "editIssue",
+		"click #addstack":        "addStack",
+		"click .addissue":        "showAddIssueForm",
+		"click .addform .cancel": "cancelAddIssueForm",
+		"click .addform .add":    "addIssue",
+		"click .num":             "openIssue",
+		"click .issue":           "editIssue",
 	},
 	addStack: function(){
 		alert('Not yet implemented');
@@ -210,9 +219,24 @@ var Board = Backbone.View.extend({
 			issue$.find('.title').text(title);
 		});
 	},
+	showAddIssueForm: function(){
+		var stackEl = $(event.target).closest('.stack');
+		stackEl.find('.addissue').hide();
+		stackEl.find('.addform').show().find('textarea').focus();
+		return false;
+	},
+	cancelAddIssueForm: function(){
+		var stackEl = $(event.target).closest('.stack');
+		stackEl.find('.addissue').show();
+		stackEl.find('.addform').hide().find('textarea').val('');
+		return false;
+	},
 	addIssue: function(){
 		var stackId = $(event.target).closest('.stack').attr('id');
-		var title = prompt('Title of new issue:');
+		var stackEl = $(event.target).closest('.stack');
+		var title = stackEl.find('.addform').hide().find('textarea').val();
+		stackEl.find('.addform').find('textarea').val('');
+		stackEl.find('.addissue').show();
 
 		stackId =  stackId.replace('stack', '');
 		var stack = stacks[stackId];
@@ -225,6 +249,13 @@ var Board = Backbone.View.extend({
 			milestone: milestone
 		}, function(data){
 			// do some shit like render it
+
+			issues = issues.concat(data);
+			data.tags = [];
+			// all this should get refactored back to the issue model and issue view
+			var issueTemplate = _.template( $('#issue-template').html() );
+			var stack = getStack(data);
+			$('#stack'+stack+' > ul').append( issueTemplate(data) );
 		});
 		return false;
 	}
