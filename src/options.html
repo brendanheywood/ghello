@@ -51,9 +51,8 @@
 	</fieldset>
 
 	<div class="actions">
-	<button class="btn primary" onclick="return save_options()">Save</button>
-	<button class="btn" onclick="window.close()">Close</button>
-	<span id="status"></span>
+	<button id="save" class="btn primary" onclick="return save_options()">Save and test</button>
+	<a id="success" href="profile.html" class="btn success" style="display:none;">View your profile</a>
 	</div>
 
 </form>
@@ -61,6 +60,9 @@
 </div>
 </body>
 <script src="lib/jquery.1.7.0.min.js"></script>
+<script src="lib/underscore-1.2.1.js"></script>
+<script src="lib/backbone-0.5.3.js"></script>
+<script src="common.js"></script>
 <script type="text/javascript">
 
 function save(name){
@@ -71,7 +73,14 @@ function save(name){
 function save_options() {
 	save('username');
 	save('password');
-	$('#status').addClass('label success').html('Options Saved').fadeOut('slow');
+	$('#save').addClass('disabled').text('Testing...');
+	GitHub('/user', null, function(){
+		$('#save').hide();
+		$('#success').show().focus();
+	}, function(){
+		$('#save').removeClass('disabled').text('Save and test');
+		$('#password').closest('.clearfix').addClass('error');
+	});
 	return false;
 }
 
@@ -84,7 +93,7 @@ function restore_options() {
 	restore('username');
 	restore('password');
 }
-
+$('#username').focus();
 </script>
 
 </html>
