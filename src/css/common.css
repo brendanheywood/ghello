@@ -39,13 +39,14 @@
 	margin: -3px 0;
 }
 
-.repos {
+.container {
 	width: 600px;
 	margin: 80px auto 50px;
 	padding: 20px 90px 60px;
 	background: white;
 	box-shadow: 10px 10px 30px black;
 }
+
 .repos > div {
 	border-bottom: 1px solid #aaa;
 }
@@ -87,6 +88,7 @@
 #loading {
 	background: rgba(0, 0, 0, .5);
 	margin-top: -40px;
+	padding-bottom: 40px;
 	width: 100%;
 	height: 100%;
 	position: absolute;
@@ -111,7 +113,7 @@ body {
 	display: inline-block;
 	border: 1px solid #999;
 	border-radius: 5px;
-	margin: 56px 5px 0 11px;
+	margin: 56px 5px 15px 11px;
 	padding: 5px;
 	box-shadow: 3px 3px 7px black;
 	color: black;
@@ -122,6 +124,8 @@ body {
 	text-shadow: 1px 1px 1px white;	
 	color: black;
 	font-size: 20px;
+	background: rgba(100%, 100%, 100%, .4);
+	border-radius: 3px;
 }
 .stack h2::before {
 	content: "☰";

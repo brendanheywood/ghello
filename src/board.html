@@ -21,14 +21,7 @@
       </ul>
       <ul class="nav secondary-nav">
         <li class="loggedin"><a href="#" id="addstack" class="">+ Add a stack</a>
-        <li><a href="#" id="settings">Options</a></li>
-<!--
-        <li class="dropdown"><a href="#" class="dropdown-toggle">Settings</a>
-          <ul class="dropdown-menu">
-            <li><a href="#" id="settings">Options</a></li>
-          </ul>
-        </li>
--->
+        <li><a href="options.html" id="settings">Options</a></li>
       </ul>
 <!--
       <p class="pull-right">Logged in as <a id="loggedin" href="#">username</a></p>
@@ -69,7 +62,7 @@
 
 <script type="text/template" id="issue-template">
 	<li class="issue" id="<%= id  %>">
-	<span class='title'><%= title %></span> <a href='#' class='num'>#<%= number %></a>
+	<span class='title'><%= title %></span> <a href='<%= html_url %>' class='num'>#<%= number %></a>
 	<% if (comments){ %>
 	<div class="summary">
 	<span class="commentscount"><%= comments %></span>
@@ -107,9 +100,6 @@ var milestone = $.QueryString['milestone'];
 $('title').html(user+'/'+repo+' Milestone: '+milestone);
 $('#repo').html(user+'/'+repo).attr('href', 'https://github.com/'+user+'/'+repo);
 $('#issues').attr('href', 'https://github.com/'+user+'/'+repo+'/issues');
-$('#settings').click(function(){
-	chrome.tabs.create({url: "options.html"});
-});
 
 var issues = [];
 var labels = [];
@@ -275,6 +265,7 @@ var Board = Backbone.View.extend({
 		var stack = stacks[stackId];
 		var state = stack.labelId == -1 ? 'closed' : 'open';
 		var labels = stack.label ? [stack.label] : null;
+		if (milestone == '*'){ milestone = null; }
 		GitHub('POST', '/repos/'+user+'/'+repo+'/issues', {
 			title: title,
 			labels: labels,
