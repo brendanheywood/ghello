@@ -78,6 +78,7 @@ function save_options() {
 		localStorage['avatar_url'] = data.avatar_url;
 		$('#save').hide();
 		$('#success').show().focus();
+		window.location = "profile.html";
 	}, function(){
 		localStorage['name'] = '';
 		localStorage['avatar_url'] = '';
