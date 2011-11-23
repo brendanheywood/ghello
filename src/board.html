@@ -237,6 +237,7 @@ var Board = Backbone.View.extend({
 		var stack = stacks[stackId];
 		var state = stack.labelId == -1 ? 'closed' : 'open';
 		var labels = stack.label ? [stack.label] : null;
+		if (milestone == '*'){ milestone = null; }
 		GitHub('POST', '/repos/'+user+'/'+repo+'/issues', {
 			title: title,
 			labels: labels,
