@@ -49,7 +49,6 @@
 		</div>
 	</div>
 	</fieldset>
-
 	<div class="actions">
 	<button id="save" class="btn primary" onclick="return save_options()">Save and test</button>
 	<a id="success" href="profile.html" class="btn success" style="display:none;">View your profile</a>
@@ -74,10 +73,14 @@ function save_options() {
 	save('username');
 	save('password');
 	$('#save').addClass('disabled').text('Testing...');
-	GitHub('/user', null, function(){
+	GitHub('/user', null, function(data){
+		localStorage['name'] = data.name;
+		localStorage['avatar_url'] = data.avatar_url;
 		$('#save').hide();
 		$('#success').show().focus();
 	}, function(){
+		localStorage['name'] = '';
+		localStorage['avatar_url'] = '';
 		$('#save').removeClass('disabled').text('Save and test');
 		$('#password').closest('.clearfix').addClass('error');
 	});
@@ -93,6 +96,7 @@ function restore_options() {
 	restore('username');
 	restore('password');
 }
+
 $('#username').focus();
 </script>
 
