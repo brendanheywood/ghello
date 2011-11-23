@@ -55,7 +55,7 @@
 
 <script type="text/template" id="issue-template">
 	<li class="issue" id="<%= id  %>">
-	<span class='title'><%= title %></span> <a href='#' class='num'>#<%= number %></a>
+	<span class='title'><%= title %></span> <a href='<%= html_url %>' class='num'>#<%= number %></a>
 	<% if (comments){ %>
 	<div class="summary">
 	<span class="commentscount"><%= comments %></span>
