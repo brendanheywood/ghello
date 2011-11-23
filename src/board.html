@@ -34,7 +34,20 @@
 	<div class="alert-message warning"><p><strong>Loading...</strong></p></div>
 </div>
 <div class="stacks"></div>
-
+<div id="modal" class="modal hide fade">
+            <div class="modal-header">
+              <a href="#" class="close">&times;</a>
+              <h3>Modal Heading</h3>
+            </div>
+            <div class="modal-body">
+              <p>One fine body…</p>
+            </div>
+            <div class="modal-footer">
+              <a href="#" class="btn primary">Add comment</a>
+              <a href="#" class="btn secondary">Assign...</a>
+            </div>
+          </div>
+</div>
 
 <script src="lib/jquery-ui/ui/jquery.ui.core.js"></script>
 <script src="lib/jquery-ui/ui/jquery.ui.widget.js"></script>
@@ -42,6 +55,7 @@
 <script src="lib/jquery-ui/ui/jquery.ui.draggable.js"></script>
 <script src="lib/jquery-ui/ui/jquery.ui.sortable.js"></script>
 <script src="lib/bootstrap/bootstrap-dropdown.js"></script>
+<script src="lib/bootstrap/bootstrap-modal.js"></script>
 <script src="lib/underscore-1.2.1.js"></script>
 <script src="lib/backbone-0.5.3.js"></script>
 <script src="common.js"></script>
@@ -202,6 +216,20 @@ var Board = Backbone.View.extend({
 	editIssue: function(){
 		var issue$ = $(event.target).closest('.issue');
 		var title = issue$.find('.title').text();
+
+		var modal = $('#modal');
+		modal.modal({
+			show: true,
+			keyboard: true,
+			backdrop: true
+		});
+		modal.find('h3').html('Issue title');	
+		modal.find('.modal-body').html('Issue description');	
+
+
+		return;
+
+
 		var title = prompt('Title of new issue:', title);
 		var issueId = $(event.target).closest('.issue').attr('id');
 		for(var c=0; c<issues.length; c++){
