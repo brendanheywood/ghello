@@ -61,7 +61,7 @@
 <script src="common.js"></script>
 
 <script type="text/template" id="issue-template">
-	<li class="issue" id="<%= id  %>">
+	<div class="issue" id="<%= id  %>">
 	<span class='title'><%= title %></span> <a href='<%= html_url %>' class='num'>#<%= number %></a>
 	<% if (comments){ %>
 	<div class="summary">
@@ -76,7 +76,7 @@
 	<% if (assignee){ %>
 		<a href='#' class='avatar'><img width=24 height=24 src='<%= assignee.avatar_url %>'></a>
 	<% } %>
-	</li>
+	</div>
 </script>
 <script type="text/template" id="stack-template">
 <div class='stack <%= name == 'Closed' ? ' closed' : ''  %>' style='background-color: #<%= color %>' id='stack<%=  id %>'>
@@ -154,6 +154,42 @@ var IssueView = Backbone.View.extend({
 	initialize: function(el, stack){
 		this.model.bind('change', this.render, this);
 	},
+	openIssue: function(event){
+		var issueNum = $(event.target).text().replace('#', '');
+		window.open('https://github.com/'+user+'/'+repo+'/issues/'+issueNum);
+		return false;
+	},
+	editIssue: function(){
+		var issue$ = $(event.target).closest('.issue');
+		var issue = issue$.issue;
+		var title = issue$.find('.title').text();
+
+
+		var modal = $('#modal');
+		modal.modal({
+			show: true,
+			keyboard: true,
+			backdrop: true
+		});
+		modal.find('h3').html('Issue title');	
+		modal.find('.modal-body').html('Issue description');	
+
+
+		return;
+
+
+		var title = prompt('Title of new issue:', title);
+		var issueId = $(event.target).closest('.issue').attr('id');
+		for(var c=0; c<issues.length; c++){
+			if (issues[c].id == issueId){ break; }
+		}
+		var issue = issues[c];
+		GitHub('PATCH', '/repos/'+user+'/'+repo+'/issues/'+issue.number, {
+			title: title,
+		}, function(){
+			issue$.find('.title').text(title);
+		});
+	},
 	render: function(){
 		$(this.el).html(this.template(this.model.toJSON()));
 		return this;
@@ -168,39 +204,16 @@ var Board = Backbone.View.extend({
 			labels = data;
 			board.drawStacks();
 		});
-		var openIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=open&milestone='+milestone, null, function(data){
-			issues = issues.concat(data);
-		});
-		var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=closed&milestone='+milestone, null, function(data){
-			issues = issues.concat(data);
-		});
+		var milestoneFilter = milestone != '*' ? ('&milestone='+milestone) : '';
+		var openIssuesPromise   = GitHub('/repos/'+user+'/'+repo+'/issues?direction=asc&state=open'  +milestoneFilter, null, this.addIssues);
+		var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?direction=asc&state=closed'+milestoneFilter, null, this.addIssues);
 
 
 		/*
 		 * When both the labels and the issues are loaded then render the issues
 		 */
 		$.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
-
-			var issueTemplate = _.template( $('#issue-template').html() );
 			
-			$.each(issues, function(index, issue){
-
-				// what stack is it?
-				var stack = getStack(issue);
-
-				// draw an issue
-				issue.tags = [];
-				if (issue.labels){
-					$.each(issue.labels, function(i, v){
-						var matches = v.name.match(/S\d+\s(.*)/);
-						if (!matches){
-							issue.tags.push(v);
-						}
-					});
-				}
-
-				$('#stack'+stack+' > ul').prepend( issueTemplate(issue) );
-			});
 
 			var loggedin = true;
 
@@ -261,48 +274,34 @@ var Board = Backbone.View.extend({
 		"click .addissue":        "showAddIssueForm",
 		"click .addform .cancel": "cancelAddIssueForm",
 		"click .addform .add":    "addIssue",
-		"click .num":             "openIssue",
-		"click .issue":           "editIssue",
+	},
+	addIssues: function(data){
+		issues = issues.concat(data);
+		$.each(data, function(index, issue){
+
+			// what stack is it?
+			var stack = getStack(issue);
+
+			// draw an issue
+			issue.tags = [];
+			if (issue.labels){
+				$.each(issue.labels, function(i, v){
+					var matches = v.name.match(/S\d+\s(.*)/);
+					if (!matches){
+						issue.tags.push(v);
+					}
+				});
+			}
+
+			var issueModel = new Issue(issue);
+			var issueView = new IssueView({model: issueModel});
+
+			$('#stack'+stack+' > ul').append( issueView.render(issue).el );
+		});
 	},
 	addStack: function(){
 		alert('Not yet implemented');
 		return false;
-	},
-	openIssue: function(event){
-		var issueNum = $(event.target).text().replace('#', '');
-		window.open('https://github.com/'+user+'/'+repo+'/issues/'+issueNum);
-		return false;
-	},
-	editIssue: function(){
-		var issue$ = $(event.target).closest('.issue');
-		var issue = issue$.issue;
-		var title = issue$.find('.title').text();
-
-
-		var modal = $('#modal');
-		modal.modal({
-			show: true,
-			keyboard: true,
-			backdrop: true
-		});
-		modal.find('h3').html('Issue title');	
-		modal.find('.modal-body').html('Issue description');	
-
-
-		return;
-
-
-		var title = prompt('Title of new issue:', title);
-		var issueId = $(event.target).closest('.issue').attr('id');
-		for(var c=0; c<issues.length; c++){
-			if (issues[c].id == issueId){ break; }
-		}
-		var issue = issues[c];
-		GitHub('PATCH', '/repos/'+user+'/'+repo+'/issues/'+issue.number, {
-			title: title,
-		}, function(){
-			issue$.find('.title').text(title);
-		});
 	},
 	showAddIssueForm: function(){
 		var stackEl = $(event.target).closest('.stack');
@@ -317,31 +316,28 @@ var Board = Backbone.View.extend({
 		return false;
 	},
 	addIssue: function(){
+
+		var board = this;
+
 		var stackId = $(event.target).closest('.stack').attr('id');
 		var stackEl = $(event.target).closest('.stack');
-		var title = stackEl.find('.addform').hide().find('textarea').val();
-		stackEl.find('.addform').find('textarea').val('');
-		stackEl.find('.addissue').show();
 
 		stackId =  stackId.replace('stack', '');
 		var stack = stacks[stackId];
-		var state = stack.labelId == -1 ? 'closed' : 'open';
-		var labels = stack.label ? [stack.label] : null;
-		if (milestone == '*'){ milestone = null; }
-		GitHub('POST', '/repos/'+user+'/'+repo+'/issues', {
-			title: title,
-			labels: labels,
-			state: state,
-			milestone: milestone
-		}, function(data){
-			// do some shit like render it
 
-			issues = issues.concat(data);
-			data.tags = [];
-			// all this should get refactored back to the issue model and issue view
-			var issueTemplate = _.template( $('#issue-template').html() );
-			var stack = getStack(data);
-			$( issueTemplate(data) ).appendTo('#stack'+stack+' > ul');
+		var newIssue = {};
+		newIssue.title = stackEl.find('.addform').hide().find('textarea').val();
+		newIssue.state = stack.labelId == -1 ? 'closed' : 'open';
+		newIssue.labels = stack.label ? [stack.label] : null;
+
+		stackEl.find('.addform').find('textarea').val('');
+		stackEl.find('.addissue').show();
+
+		if (milestone != '*'){
+			newIssue.milestone = milestone;
+		}
+		GitHub('POST', '/repos/'+user+'/'+repo+'/issues', newIssue, function(data){
+			board.addIssues([data]);
 		});
 		return false;
 	},
