@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="lib/jquery-ui/ui/themes/base/jquery.ui.all.css">
 -->
 <link rel="stylesheet" href="css/common.css">
+<script src="lib/underscore-1.2.1.js"></script>
+<script src="lib/backbone-0.5.3.js"></script>
 <body>
 
 <div class="topbar" data-dropdown="dropdown">
@@ -56,8 +58,6 @@
 <script src="lib/jquery-ui/ui/jquery.ui.sortable.js"></script>
 <script src="lib/bootstrap/bootstrap-dropdown.js"></script>
 <script src="lib/bootstrap/bootstrap-modal.js"></script>
-<script src="lib/underscore-1.2.1.js"></script>
-<script src="lib/backbone-0.5.3.js"></script>
 <script src="common.js"></script>
 
 <script type="text/template" id="issue-template">
@@ -106,71 +106,6 @@ var labels = [];
 var labels2index = {};
 var stacks = [];
 
-function drawStacks(){
-	// for each label, make a stack if it starts with 'S\d+\s'
-	// also make a stack for no labels and closed
-
-	$('#loading').fadeOut('slow');
-
-	stacks = [];
-
-	// Add the first backlog stack
-	stacks.push({
-		name: 'Backlog',
-		color: 'eeeeee',
-		labelId: 0,
-		label: null
-	});
-	labels = labels.sort(function(a,b){
-		return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
-	});
-	var labelIndex = 0;
-	$.each(labels, function(index, value){
-		var label = labels[index];
-		var matches = label.name.match(/S\d+\s(.*)/);
-		if (!matches){
-			return;
-		}
-		labels2index[label.name] = ++labelIndex;
-		stacks.push({
-			name: matches[1],
-			color: label.color,
-			labelId: index,
-			label: label.name
-		});
-	});
-
-	// Add the last closed stack
-	stacks.push({
-		name: 'Closed',
-		color: '888888',
-		labelId: -1,
-		label: null
-	});
-	var c;
-
-	var stackTemplate = _.template( $('#stack-template').html() );
-
-	$.each(stacks, function(index, stack){
-		stack.id = index;
-		var el = stackTemplate(stack);
-		$( el ).appendTo('.stacks');
-
-	});
-
-}
-
-var labelsPromise = GitHub('/repos/'+user+'/'+repo+'/labels', null, function(data){
-	labels = data;
-	drawStacks();
-});
-var openIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=open&milestone='+milestone, null, function(data){
-	issues = issues.concat(data);
-});
-var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=closed&milestone='+milestone, null, function(data){
-	issues = issues.concat(data);
-});
-
 
 /*
  * given an issue find out which stack it should be in
@@ -193,9 +128,134 @@ function getStack(issue){
 	return stack;	
 }
 
+var Issue = Backbone.Model.extend({
+	/*
+	 * if 0 then remove all stack tags
+	 * if last then closes the issue
+	 */
+	setStack: function(stack_no){
+		// set the stack
+		// set the labels too
+
+		// this.save({stack: stack_no});
+	},
+	sync: function(){
+		// do nothing for now
+	}
+});
+
+var IssueView = Backbone.View.extend({
+	tagName: 'li',
+	template: _.template( $('#issue-template').html() ),
+	events: {
+		"click .num":             "openIssue",
+		"click .issue":           "editIssue",
+	},
+	initialize: function(el, stack){
+		this.model.bind('change', this.render, this);
+	},
+	render: function(){
+		$(this.el).html(this.template(this.model.toJSON()));
+		return this;
+	}
+});
 
 var Board = Backbone.View.extend({
 	el: $('body'),
+	initialize: function(){
+		var board = this;
+		var labelsPromise = GitHub('/repos/'+user+'/'+repo+'/labels', null, function(data){
+			labels = data;
+			board.drawStacks();
+		});
+		var openIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=open&milestone='+milestone, null, function(data){
+			issues = issues.concat(data);
+		});
+		var closedIssuesPromise = GitHub('/repos/'+user+'/'+repo+'/issues?state=closed&milestone='+milestone, null, function(data){
+			issues = issues.concat(data);
+		});
+
+
+		/*
+		 * When both the labels and the issues are loaded then render the issues
+		 */
+		$.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
+
+			var issueTemplate = _.template( $('#issue-template').html() );
+			
+			$.each(issues, function(index, issue){
+
+				// what stack is it?
+				var stack = getStack(issue);
+
+				// draw an issue
+				issue.tags = [];
+				if (issue.labels){
+					$.each(issue.labels, function(i, v){
+						var matches = v.name.match(/S\d+\s(.*)/);
+						if (!matches){
+							issue.tags.push(v);
+						}
+					});
+				}
+
+				$('#stack'+stack+' > ul').prepend( issueTemplate(issue) );
+			});
+
+			var loggedin = true;
+
+			// should only do this is we are logged in (and have permission?)
+			if (loggedin){
+				/*
+				$(".stacks").sortable({
+				});
+				*/
+				$(".issues").sortable({
+					connectWith: '.issues',
+					stop: function(event, ui){
+						var stackId = $(event.target).closest('.stack').attr('id');
+						var issueId = $(event.target).closest('.issue').attr('id');
+						stackId =  stackId.replace('stack', '');
+						var label = stacks[stackId];
+						for(var c=0; c<issues.length; c++){
+							if (issues[c].id == issueId){ break; }
+						}
+						var issue = issues[c];
+
+						// find current labels
+						var oldLabels = issue.labels;
+
+						// remove all stack labels
+						var newLabels = _.filter(oldLabels, function(label){
+							var matches = label.name.match(/S\d+\s(.*)/);
+							return !matches;
+						});
+
+						// prep raw labels for saving
+						var labels = _.map(newLabels, function(label){
+							return label.name;
+						});
+						var state = 'open';
+						if (label && label.id != 0){
+							if (!label.label){
+								state = 'closed';
+							} else {
+								labels.push(label.label);
+							}
+						}
+						GitHub('PATCH', '/repos/'+user+'/'+repo+'/issues/'+issue.number, {
+							labels: labels,
+							state: state
+						});
+
+						// if moving to close then do that ajax
+						// if moving to another stack then do that ajax
+						var a = event;
+					}
+				});
+			};
+		});
+	},
 	events: {
 		"click #addstack":        "addStack",
 		"click .addissue":        "showAddIssueForm",
@@ -215,7 +275,9 @@ var Board = Backbone.View.extend({
 	},
 	editIssue: function(){
 		var issue$ = $(event.target).closest('.issue');
+		var issue = issue$.issue;
 		var title = issue$.find('.title').text();
+
 
 		var modal = $('#modal');
 		modal.modal({
@@ -279,95 +341,67 @@ var Board = Backbone.View.extend({
 			// all this should get refactored back to the issue model and issue view
 			var issueTemplate = _.template( $('#issue-template').html() );
 			var stack = getStack(data);
-			$('#stack'+stack+' > ul').append( issueTemplate(data) );
+			$( issueTemplate(data) ).appendTo('#stack'+stack+' > ul');
 		});
 		return false;
+	},
+	drawStacks: function(){
+		// for each label, make a stack if it starts with 'S\d+\s'
+		// also make a stack for no labels and closed
+
+		$('#loading').fadeOut('slow');
+
+		stacks = [];
+
+		// Add the first backlog stack
+		stacks.push({
+			name: 'Backlog',
+			color: 'eeeeee',
+			labelId: 0,
+			label: null
+		});
+		labels = labels.sort(function(a,b){
+			return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
+		});
+		var labelIndex = 0;
+		$.each(labels, function(index, value){
+			var label = labels[index];
+			var matches = label.name.match(/S\d+\s(.*)/);
+			if (!matches){
+				return;
+			}
+			labels2index[label.name] = ++labelIndex;
+			stacks.push({
+				name: matches[1],
+				color: label.color,
+				labelId: index,
+				label: label.name
+			});
+		});
+
+		// Add the last closed stack
+		stacks.push({
+			name: 'Closed',
+			color: '888888',
+			labelId: -1,
+			label: null
+		});
+		var c;
+
+		var stackTemplate = _.template( $('#stack-template').html() );
+
+		$.each(stacks, function(index, stack){
+			stack.id = index;
+			var el = stackTemplate(stack);
+			$( el ).appendTo('.stacks');
+	
+		});
 	}
 
 });
 
 var board = new Board();
 
-
-/*
- * When both the labels and the issues are loaded then render the issues
- */
-$.when(labelsPromise, openIssuesPromise, closedIssuesPromise).then(function(){
-
-	var issueTemplate = _.template( $('#issue-template').html() );
-	
-	$.each(issues, function(index, issue){
-
-		// what stack is it?
-		var stack = getStack(issue);
-
-		// draw an issue
-		issue.tags = [];
-		if (issue.labels){
-			$.each(issue.labels, function(i, v){
-				var matches = v.name.match(/S\d+\s(.*)/);
-				if (!matches){
-					issue.tags.push(v);
-				}
-			});
-		}
-
-		$('#stack'+stack+' > ul').prepend( issueTemplate(issue) );
-	});
-
-	var loggedin = true;
-
-	// should only do this is we are logged in (and have permission?)
-	if (loggedin){
-/*
-		$(".stacks").sortable({
-		});
-*/
-		$(".issues").sortable({
-			connectWith: '.issues',
-			stop: function(event, ui){
-				var stackId = $(event.target).closest('.stack').attr('id');
-				var issueId = $(event.target).closest('.issue').attr('id');
-				stackId =  stackId.replace('stack', '');
-				var label = stacks[stackId];
-				for(var c=0; c<issues.length; c++){
-					if (issues[c].id == issueId){ break; }
-				}
-				var issue = issues[c];
-
-				// find current labels
-				var oldLabels = issue.labels;
-
-				// remove all stack labels
-				var newLabels = _.filter(oldLabels, function(label){
-					var matches = label.name.match(/S\d+\s(.*)/);
-					return !matches;
-				});
-
-				// prep raw labels for saving
-				var labels = _.map(newLabels, function(label){
-					return label.name;
-				});
-				var state = 'open';
-				if (label && label.id != 0){
-					if (!label.label){
-						state = 'closed';
-					} else {
-						labels.push(label.label);
-					}
-				}
-				GitHub('PATCH', '/repos/'+user+'/'+repo+'/issues/'+issue.number, {
-					labels: labels,
-					state: state
-				});
-
-				// if moving to close then do that ajax
-				// if moving to another stack then do that ajax
-				var a = event;
-			}
-		});
-	};
-});
 
 </script>
 </body>
