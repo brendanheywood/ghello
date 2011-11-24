@@ -81,9 +81,6 @@
 		<a href="#" class="btn primary">Add comment</a>
 		<a href="#" class="btn secondary">Assign...</a>
 	</div>
-	<script>
-		$('.markdown').autoResize({minHeight: 150});
-	</script>
 </script>
 <script type="text/template" id="issue-template">
 	<div class="issue" id="<%= id  %>">
@@ -192,12 +189,16 @@ var IssueView = Backbone.View.extend({
 		var modal = $('#modal');
 
 		var html = issueEditTemplate(issue);
-		modal.html(html);
-		modal.modal({
-			show: true,
-			keyboard: true,
-			backdrop: true
-		});
+		modal
+			.html(html)
+			.modal({
+				show: true,
+				keyboard: true,
+				backdrop: true
+			})
+			.bind('shown', function(){
+				$('.markdown').autoResize({minHeight: 150, animate: false});
+			});
 	},
 	editIssueTitle: function(){
 
