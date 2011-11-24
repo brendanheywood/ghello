@@ -36,20 +36,8 @@
 	<div class="alert-message warning"><p><strong>Loading...</strong></p></div>
 </div>
 <div class="stacks"></div>
-<div id="modal" class="modal hide fade">
-            <div class="modal-header">
-              <a href="#" class="close">&times;</a>
-              <h3>Modal Heading</h3>
-            </div>
-            <div class="modal-body">
-              <p>One fine body…</p>
-            </div>
-            <div class="modal-footer">
-              <a href="#" class="btn primary">Add comment</a>
-              <a href="#" class="btn secondary">Assign...</a>
-            </div>
-          </div>
-</div>
+
+<div id="modal" class="modal fade hide"></div>
 
 <script src="lib/jquery-ui/ui/jquery.ui.core.js"></script>
 <script src="lib/jquery-ui/ui/jquery.ui.widget.js"></script>
@@ -60,6 +48,40 @@
 <script src="lib/bootstrap/bootstrap-modal.js"></script>
 <script src="common.js"></script>
 
+<script type="text/template" id="issue-edit-template">
+	<div class="modal-header">
+		<a href="#" class="close">&times;</a>
+		<h3>
+			<%= title %>
+			<a href='<%= html_url %>' class='num'>#<%= number %></a>
+		</h3>
+	</div>
+	<div class="modal-body">
+
+	<div class="markdown"><%= body %></div>
+
+	<% if (comments){ %>
+		<div class="summary">
+			<span class="commentscount"><%= comments %></span>
+		</div>
+	<% } %>
+
+	<% if (tags){ %>
+		<ul class='labels'>
+			<% _.each (tags, function(tag){ %><li style='border-color: #<%= tag.color %>'><%= tag.name %></li><% }); %>
+		</ul>
+	<% } %>
+	<% if (assignee){ %>
+		<a href='#' class='avatar'><img width=24 height=24 src='<%= assignee.avatar_url %>'></a>
+	<% } %>
+
+
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn primary">Add comment</a>
+		<a href="#" class="btn secondary">Assign...</a>
+	</div>
+</script>
 <script type="text/template" id="issue-template">
 	<div class="issue" id="<%= id  %>">
 	<span class='title'><%= title %></span> <a href='<%= html_url %>' class='num'>#<%= number %></a>
@@ -160,35 +182,32 @@ var IssueView = Backbone.View.extend({
 		return false;
 	},
 	editIssue: function(){
-		var issue$ = $(event.target).closest('.issue');
-		var issue = issue$.issue;
-		var title = issue$.find('.title').text();
+		var issue = this.model.toJSON();
 
+		var issueEditTemplate = _.template( $('#issue-edit-template').html() );
 
 		var modal = $('#modal');
+
+		var html = issueEditTemplate(issue);
+		modal.html(html);
 		modal.modal({
 			show: true,
 			keyboard: true,
 			backdrop: true
 		});
-		modal.find('h3').html('Issue title');	
-		modal.find('.modal-body').html('Issue description');	
+	},
+	editIssueTitle: function(){
 
-
-		return;
-
-
-		var title = prompt('Title of new issue:', title);
-		var issueId = $(event.target).closest('.issue').attr('id');
-		for(var c=0; c<issues.length; c++){
-			if (issues[c].id == issueId){ break; }
-		}
-		var issue = issues[c];
+		var title = this.model.get('title');
+		title = prompt('Title of issue:', title);
+		this.model.set('title', title);
+/*
 		GitHub('PATCH', '/repos/'+user+'/'+repo+'/issues/'+issue.number, {
 			title: title,
 		}, function(){
 			issue$.find('.title').text(title);
 		});
+*/
 	},
 	render: function(){
 		$(this.el).html(this.template(this.model.toJSON()));
