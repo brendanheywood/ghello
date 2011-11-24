@@ -1,3 +1,8 @@
+.markdown {
+	width: 100%;
+	margin-bottom: 10px;
+}
+
 .topbar {
 	box-shadow: 0 13px 10px rgba(0,0,0,0.4);
 }

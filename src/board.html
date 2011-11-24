@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="css/common.css">
 <script src="lib/underscore-1.2.1.js"></script>
 <script src="lib/backbone-0.5.3.js"></script>
+<script src="lib/jquery.autoresize.js"></script>
 <body>
 
 <div class="topbar" data-dropdown="dropdown">
@@ -58,22 +59,21 @@
 	</div>
 	<div class="modal-body">
 
-	<div class="markdown"><%= body %></div>
+		<textarea class="markdown"><%= body %></textarea>
+		<% if (comments){ %>
+			<div class="summary">
+				<span class="commentscount"><%= comments %></span>
+			</div>
+		<% } %>
 
-	<% if (comments){ %>
-		<div class="summary">
-			<span class="commentscount"><%= comments %></span>
-		</div>
-	<% } %>
-
-	<% if (tags){ %>
-		<ul class='labels'>
-			<% _.each (tags, function(tag){ %><li style='border-color: #<%= tag.color %>'><%= tag.name %></li><% }); %>
-		</ul>
-	<% } %>
-	<% if (assignee){ %>
-		<a href='#' class='avatar'><img width=24 height=24 src='<%= assignee.avatar_url %>'></a>
-	<% } %>
+		<% if (tags){ %>
+			<ul class='labels'>
+				<% _.each (tags, function(tag){ %><li style='border-color: #<%= tag.color %>'><%= tag.name %></li><% }); %>
+			</ul>
+		<% } %>
+		<% if (assignee){ %>
+			<a href='#' class='avatar'><img width=24 height=24 src='<%= assignee.avatar_url %>'></a>
+		<% } %>
 
 
 	</div>
@@ -81,6 +81,9 @@
 		<a href="#" class="btn primary">Add comment</a>
 		<a href="#" class="btn secondary">Assign...</a>
 	</div>
+	<script>
+		$('.markdown').autoResize({minHeight: 100});
+	</script>
 </script>
 <script type="text/template" id="issue-template">
 	<div class="issue" id="<%= id  %>">
