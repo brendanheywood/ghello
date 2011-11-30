@@ -1,0 +1,5 @@
+<project>
+	<target name="zip" description="Zip">
+		<zip zipfile="ghello.zip" basedir="src" />
+	</target>
+</project>
