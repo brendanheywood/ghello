@@ -54,7 +54,7 @@
 		<a href="#" class="close">&times;</a>
 		<h3>
 			<%= title %>
-			<a href='<%= html_url %>' class='num'>#<%= number %></a>
+			<a target="_blank" href='<%= html_url %>' class='num'>#<%= number %></a>
 		</h3>
 	</div>
 	<div class="modal-body">
@@ -226,10 +226,6 @@ var IssueView = Backbone.View.extend({
 			var modalHeight = modal.height();
 			var body = modal.find('.modal-body');
 			if (modalHeight > winHeight - 50){
-				modal.css({
-					top: 0,
-					'margin-top': '10px'
-				});
 				body.height(winHeight - 190 +'px');
 			}
 		});

@@ -1,5 +1,9 @@
+.modal {
+	top: 30px !important;
+	margin-top: 0;
+}
 .modal-body {
-	overflow: scroll;
+	overflow: auto;
 	width: 530px;
 }
 
