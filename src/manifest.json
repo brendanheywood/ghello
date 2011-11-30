@@ -1,7 +1,7 @@
 {
 	"name":	"Ghello",
 	"description": "Github issues shaped like Trello",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"background_page" : "background.html",
 	"icons": {
 		"16":  "images/logo-16.png",
