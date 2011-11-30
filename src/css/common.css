@@ -1,3 +1,42 @@
+.modal-body {
+	overflow: scroll;
+	width: 530px;
+}
+
+.who {
+	float: right;
+	margin: -8px -8px 0 0;
+}
+.comments {
+	clear: both;
+	border-top: 1px solid #DDD;
+}
+
+.comments pre {
+	clear: both;
+	margin-left: 60px;
+}
+.comments .me pre {
+	margin-left: 0px;
+	margin-right: 60px;
+	background: #DFC;
+}
+.comments .who {
+	margin: -8px 4px 0 0;
+}
+.comments .me .who {
+	float: left;
+	margin: -8px 0 0 4px;
+}
+.comments .avatar {
+	right: 0;
+	top: 5px;
+}
+.comments .me .avatar {
+	float: left;
+}
+
+
 .markdown {
 	width: 100%;
 	margin-bottom: 10px;
@@ -206,6 +245,7 @@ body {
 	font-weight: bold;
 	box-shadow: 2px 2px 4px  rgba(0,0,0,.4);
 	line-height: 13px;
+	border-style: solid;
 }
 .closed .issue .title {
 }

@@ -73,13 +73,30 @@
 		<% } %>
 		<% if (assignee){ %>
 			<a href='#' class='avatar'><img width=24 height=24 src='<%= assignee.avatar_url %>'></a>
+			<span class="who">Assigned to <%= assignee.login %></span>
 		<% } %>
 
+		<%
+		var commentData = commentData;
+		var loggedIn = localStorage['username']; 
+		%>
+		<% if (commentData){ %>
+			<div class="comments">
+			<p>Comments:</p>
+			<% _.each (commentData, function(comment){ %>
+				<div class="<%= loggedIn == comment.user.login ? 'me' : '' %>">
+ 					<a href='#' class='avatar'><img width=24 height=24 src='<%= comment.user.avatar_url %>'></a>
+					<span class="who"><%= comment.user.login %></span>
+					<pre><%= comment.body %></pre>
+				</div>
+			<% }); %>
+			</div>
+		<% } %>
 
 	</div>
 	<div class="modal-footer">
-		<a href="#" class="btn primary">Add comment</a>
-		<a href="#" class="btn secondary">Assign...</a>
+		<a href="#" class="addcomment btn primary">Add comment</a>
+		<a href="#" class="assignto btn secondary">Assign...</a>
 	</div>
 </script>
 <script type="text/template" id="issue-template">
@@ -173,6 +190,9 @@ var IssueView = Backbone.View.extend({
 		"click .num":             "openIssue",
 		"click .issue":           "editIssue",
 	},
+	noop: function(){
+		alerT('Not yet implemented');
+	},
 	initialize: function(el, stack){
 		this.model.bind('change', this.render, this);
 	},
@@ -182,23 +202,37 @@ var IssueView = Backbone.View.extend({
 		return false;
 	},
 	editIssue: function(){
-		var issue = this.model.toJSON();
 
 		var issueEditTemplate = _.template( $('#issue-edit-template').html() );
 
 		var modal = $('#modal');
+		var model = this.model;
 
-		var html = issueEditTemplate(issue);
-		modal
-			.html(html)
+		GitHub('/repos/'+user+'/'+repo+'/issues/'+model.get('number')+'/comments', null, function(comments){
+			model.set({commentData: comments});
+			var issue = model.toJSON();
+			var html = issueEditTemplate(issue);
+
+			modal.html(html)
 			.modal({
 				show: true,
 				keyboard: true,
 				backdrop: true
 			})
 			.bind('shown', function(){
-				$('.markdown').autoResize({minHeight: 150, animate: false});
+				$('.markdown').autoResize({minHeight: 100, animate: false});
 			});
+			var winHeight = $(window).height();
+			var modalHeight = modal.height();
+			var body = modal.find('.modal-body');
+			if (modalHeight > winHeight - 50){
+				modal.css({
+					top: 0,
+					'margin-top': '10px'
+				});
+				body.height(winHeight - 190 +'px');
+			}
+		});
 	},
 	editIssueTitle: function(){
 
